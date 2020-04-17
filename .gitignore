@@ -3,7 +3,6 @@
 .flutter-plugins-dependencies
 .idea/
 .packages
-README.md
 android/
 build/
 flutter_01.log
