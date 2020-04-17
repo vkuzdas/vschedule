@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:logger/logger.dart';
-import 'package:vseschedule_03/src/blocs/schedule_bloc_provider.dart';
+import '../blocs/schedule_bloc_provider.dart';
 import '../logging/logger.dart';
 import '../ui/schedule_screen.dart';
 

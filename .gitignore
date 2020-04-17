@@ -1,0 +1,13 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.packages
+README.md
+android/
+build/
+flutter_01.log
+ios/
+pubspec.lock
+vseschedule03.iml
+

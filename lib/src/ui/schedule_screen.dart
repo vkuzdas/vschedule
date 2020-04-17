@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import '../ui/picker_widget.dart';
+import 'picker_widget.dart';
 import '../blocs/schedule_bloc.dart';
 import '../blocs/schedule_bloc_provider.dart';
 

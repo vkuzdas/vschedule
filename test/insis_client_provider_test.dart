@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logger/logger.dart';
-import 'package:vseschedule_03/src/logging/logger.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client_provider.dart';
 
