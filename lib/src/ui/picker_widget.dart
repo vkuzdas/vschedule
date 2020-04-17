@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-class PickerWidget extends StatefulWidget {
-
+class DatePicker extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return PickerWidgetState();
+    return DatePickerState();
   }
-
 }
 
-class PickerWidgetState extends State<PickerWidget> {
+class DatePickerState extends State<DatePicker> {
 
-  static final Map<int, String> dayMap = {
+  static final Map<int, String> _dayMap = {
     1: "Po",
     2: "Út",
     3: "St",
@@ -35,56 +33,54 @@ class PickerWidgetState extends State<PickerWidget> {
     12: "PROSINEC"
   };
 
-  int selected;
-  String selectedMonth;
-  DateTime NOW;
+  int _selected;
+  String _selectedMonth;
+  DateTime _NOW;
   // TODO: Add some notifier to this so that [ScheduleBloc] knows what date should be built
 
 
   @override
   void initState() {
     super.initState();
-    NOW = DateTime.now();
-    selected = 0;      /// today is 0th index
-    selectedMonth = getMonthTag(daysBack(selected));
+    _NOW = DateTime.now();
+    _selected = 0;      /// today is 0th index
+    _selectedMonth = getMonthTag(daysBack(_selected));
   }
 
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
+    final double childSize = deviceWidth/7;
 
     return Column(
       children: <Widget>[
-
-
         Container( // dynamic Month text
             padding: EdgeInsets.only(left: deviceWidth * 0.05),
             width: deviceWidth,
             child: Text(
-              selectedMonth,
+              _selectedMonth,
               textAlign: TextAlign.left,
               style: TextStyle(fontFamily: "Poppins", fontSize: 14),
             )
         ),
-
-        Container(
-          height: 60,
+        Container( // day picker
+          height: childSize,
           child: RotatedBox(
             quarterTurns: 1,
             child: ListWheelScrollView.useDelegate(
               onSelectedItemChanged: (int) {
                 setState(() { /// Rebuild selectedWidget, possibly Month text
-                  selected = int;
-                  selectedMonth =
-                  ( getMonthTag(daysBack(int)) == selectedMonth ) ?
-                  selectedMonth : getMonthTag(daysBack(int));
+                  _selected = int;
+                  _selectedMonth =
+                  ( getMonthTag(daysBack(int)) == _selectedMonth ) ?
+                  _selectedMonth : getMonthTag(daysBack(int));
                 });
               },
               perspective: double.minPositive,
               controller: FixedExtentScrollController(initialItem: 0),
               physics: SlowFixedExtentScrollPhysics(),
-              itemExtent: 60,
+              itemExtent: childSize, // 7 days per width
               childDelegate: ListWheelChildBuilderDelegate(
                   builder: (ctxt, int) {
                     return RotatedBox(quarterTurns: 3,
@@ -101,33 +97,28 @@ class PickerWidgetState extends State<PickerWidget> {
 
   /// State widgets
   Widget selectedWidget(int i) {
-    if (i == selected) {
-      return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          textBaseline: TextBaseline.alphabetic,
-          children: <Widget>[
-            Text(
-              DateTime.now().subtract(Duration(days: i)).day.toString(), /// [1..31]
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-            ),
-            Text(
-              _getDayTag(DateTime.now().subtract(Duration(days: i))), /// [Po...Ne]
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-            ),
-          ],
-        ),
+    if (i == _selected) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            DateTime.now().subtract(Duration(days: i)).day.toString(), /// [1..31]
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
+          Text(
+            _getDayTag(DateTime.now().subtract(Duration(days: i))), /// [Po...Ne]
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
+        ],
       );
     }
     else {
-      return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(DateTime.now().subtract(Duration(days: i)).day.toString()),
-            Text(""),
-          ],
-        ),
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(DateTime.now().subtract(Duration(days: i)).day.toString(), style: TextStyle(color: Color(0x88B9B9B9)),),
+          Text(""),
+        ],
       );
     }
   }
@@ -135,7 +126,7 @@ class PickerWidgetState extends State<PickerWidget> {
 
   ///Helper methods
   String _getDayTag(DateTime time) {
-    return dayMap[time.weekday]; /// [Po...Ne]
+    return _dayMap[time.weekday]; /// [Po...Ne]
   }
 
   String getMonthTag(DateTime time) {
@@ -143,7 +134,7 @@ class PickerWidgetState extends State<PickerWidget> {
   }
 
   DateTime daysBack(int i) {
-    return NOW.subtract(Duration(days:i));
+    return _NOW.subtract(Duration(days:i));
   }
 
 }
