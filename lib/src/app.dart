@@ -51,8 +51,10 @@ class App extends StatelessWidget {
 
       /// Colors
       scaffoldBackgroundColor: blackBackground,
+      cardColor: blackBackground,
 
       colorScheme: ColorScheme.fromSwatch(
+        cardColor: blackBackground,
         backgroundColor: blackBackground,
         accentColor: greenBackground,
         brightness: Brightness.dark,
@@ -99,6 +101,13 @@ class App extends StatelessWidget {
         body1: TextStyle(fontSize: 15.0, color: whiteFont),
 
 
+      ),
+      cardTheme: CardTheme(
+        elevation: 0.0,
+        color: blackBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
 
       fontFamily: 'Quicksand',

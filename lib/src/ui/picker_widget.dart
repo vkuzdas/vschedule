@@ -103,11 +103,11 @@ class DatePickerState extends State<DatePicker> {
         children: <Widget>[
           Text(
             DateTime.now().subtract(Duration(days: i)).day.toString(), /// [1..31]
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            style: TextStyle(fontFamily: "Poppins" ,fontSize: 16, fontWeight: FontWeight.w800),
           ),
           Text(
             _getDayTag(DateTime.now().subtract(Duration(days: i))), /// [Po...Ne]
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            style: TextStyle(fontFamily: "Poppins" ,fontSize: 16, fontWeight: FontWeight.w800),
           ),
         ],
       );
