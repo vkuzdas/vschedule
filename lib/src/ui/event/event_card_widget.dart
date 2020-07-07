@@ -9,7 +9,7 @@ class EventCard extends StatelessWidget {
   String _teacher;
   String _room;
 
-  //TODO: how will you differ between seminar and
+  //TODO: how will you differ between seminar and lecture
 
 
 
@@ -50,7 +50,7 @@ class EventCard extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Container( padding: EdgeInsets.all(5),alignment: Alignment.centerLeft,
-                      child: Text("Programming in Java Language", style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
+                      child: Text(_course, style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
                   ),
                   Row(
                     children: <Widget>[

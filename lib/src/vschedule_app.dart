@@ -17,7 +17,7 @@ const Color cyan = Color(0xFF27AAE0);
 const Color darkBlue = Color(0xFF3E5BA7);
 
 
-class App extends StatelessWidget {
+class VscheduleApp extends StatelessWidget {
 
   Repository repo;
 
