@@ -1,12 +1,8 @@
-
-import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client_provider.dart';
 
-import '../models/schedule_event.dart';
-
 import '../logging/logger.dart';
-import 'package:logger/logger.dart';
-
+import '../models/schedule_event.dart';
 import 'credentials/credential_provider.dart';
 import 'db/db_event_provider.dart';
 
@@ -37,25 +33,23 @@ class Repository {
 
 
   /* Resource management: */
-
-  Future<List<ScheduleEvent>> getDaySchedule(Day day) async {
-    List<ScheduleEvent> todaySchedule = await _dbProvider.getEventsByDay(day);
-    if (todaySchedule.length == 0) { // empty db
-      _readCredentials();
-      List<ScheduleEvent> wholeSchedule = await _apiProvider.getSchedule(_usr, _pwd);
-      if (wholeSchedule == null) {
-        throw Exception("ApiProvider failed.");
-      } else {
-        _saveScheduleToDB(wholeSchedule);
-        todaySchedule = await _dbProvider.getEventsByDay(day);
-      }
-    }
-    return todaySchedule;
-  }
+//  Future<List<ScheduleEvent>> getDaySchedule(String day) async {
+//    List<ScheduleEvent> todaySchedule = await _dbProvider.getEventsByDay(day);
+//    if (todaySchedule.length == 0) { // empty db
+//      _readCredentials();
+//      List<ScheduleEvent> wholeSchedule = await _apiProvider.getSchedule(_usr, _pwd);
+//      if (wholeSchedule == null) {
+//        throw Exception("ApiProvider failed.");
+//      } else {
+//        _saveScheduleToDB(wholeSchedule);
+//        todaySchedule = await _dbProvider.getEventsByDay(day);
+//      }
+//    }
+//    return todaySchedule;
+//  }
 
 
   /* Database */
-
   updateScheduleEvent(ScheduleEvent event) {
     // TODO
   }
@@ -69,7 +63,6 @@ class Repository {
 
 
   /* Credentials: */
-
   saveCredentials() {
     _logger.i("Credentials saved: [" + _usr + ", " + _pwd + "]");
     if (_usr == null || _pwd == null) {

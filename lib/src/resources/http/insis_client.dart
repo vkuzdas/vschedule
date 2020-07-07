@@ -1,7 +1,7 @@
-import 'package:vseschedule_03/src/logging/logger.dart';
-import 'package:http/http.dart';
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:http/http.dart';
+import 'package:vseschedule_03/src/logging/logger.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 
 class InsisClient {
@@ -94,6 +94,6 @@ class InsisClient {
     String entry = el.nodes[4].nodes[0].nodes[0].text;
     String room = el.nodes[5].nodes[0].nodes[0].nodes[0].text;
     String teacher = el.nodes[6].nodes[0].nodes[0].nodes[0].nodes[0].text;
-    return ScheduleEvent.fromStrings(day, from, until, course, entry, room, teacher, "1", "0");
+    return ScheduleEvent.fromStrings(day, from, until, course, entry, room, teacher);
   }
 }

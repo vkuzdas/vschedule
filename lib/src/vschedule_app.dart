@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vseschedule_03/src/resources/repository.dart';
 import 'package:vseschedule_03/src/ui/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
 import 'ui/login_screen.dart';
-import 'package:flutter/services.dart';
 
+// Should be moved to theme
 const Color blackBackground = Color(0xFF212325);
 const Color greenBackground = Color(0xFF2C8F4E);
 const Color greenBackgroundFaded = Color(0x882C8F4E);
@@ -23,6 +24,7 @@ class VscheduleApp extends StatelessWidget {
 
   Widget build(BuildContext context) {
 
+    /// App display properties
     SystemChrome.setEnabledSystemUIOverlays([]);// disable upper bar
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -32,27 +34,45 @@ class VscheduleApp extends StatelessWidget {
     bool signedInPreviously = repo.isEmpty();
 
     return MaterialApp(
+      title: 'vschedule',
       theme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       darkTheme: vscheduleDarkThemeData(),
 
+
+      // TODO: this boolean does not work
       initialRoute: signedInPreviously ? "/login" : "/schedule",
       routes: {
         "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
         "/schedule": (ctxt) => ScheduleScreen()
       },
-
-      title: 'vschedule',
     );
   }
 
+
+  /// Common features used across the app
+  /// Colors, Fonts, Buttons, ...
   ThemeData vscheduleDarkThemeData() {
     return ThemeData(
 
+      /// Text
+      textTheme: TextTheme(
+        headline5: // LOGO "vschedule" on Login Page
+        TextStyle(fontFamily: "Poppins", fontSize: 50.0, fontWeight: FontWeight.w100, letterSpacing: 1.5, color: greenBackground,
+            shadows: [
+              Shadow(offset: Offset(-0.3, -0.3), color: greenBackground),/*bottomLeft*/
+              Shadow(offset: Offset(0.3, -0.3), color: greenBackground),/*bottomRight*/
+              Shadow(offset: Offset(0.3, 0.3), color: greenBackground),/*topRight*/
+              Shadow(offset: Offset(-0.3, 0.3), color: greenBackground),/*topLeft*/
+            ]),
+        headline6: // Page Title, "Rozvrh" on ScheduleScreen
+        TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
+        bodyText2: TextStyle(fontSize: 15.0, color: whiteFont),
+      ),
+      fontFamily: 'Quicksand',
+
       /// Colors
       scaffoldBackgroundColor: blackBackground,
-      cardColor: blackBackground,
-
       colorScheme: ColorScheme.fromSwatch(
         cardColor: blackBackground,
         backgroundColor: blackBackground,
@@ -70,7 +90,6 @@ class VscheduleApp extends StatelessWidget {
         disabledColor: greenBackgroundVeryFaded,
       ),
 
-
       /// TextInputField
       inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(fontSize: 16, fontFamily: "Quicksand", color: whiteFontFaded),
@@ -83,25 +102,7 @@ class VscheduleApp extends StatelessWidget {
           fillColor: blackBackground
       ),
 
-      /// Text
-      textTheme: TextTheme(
-
-        headline: // LOGO "vschedule" on Login Page
-          TextStyle(fontFamily: "Poppins", fontSize: 50.0, fontWeight: FontWeight.w100, letterSpacing: 1.5, color: greenBackground,
-            shadows: [
-              Shadow(offset: Offset(-0.3, -0.3), color: greenBackground/*bottomLeft*/),
-              Shadow(offset: Offset(0.3, -0.3), color: greenBackground/*bottomRight*/),
-              Shadow(offset: Offset(0.3, 0.3), color: greenBackground/*topRight*/),
-              Shadow(offset: Offset(-0.3, 0.3), color: greenBackground/*topLeft*/),
-            ]),
-
-        title: // Page Title, "Rozvrh" on ScheduleScreen
-          TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
-
-        body1: TextStyle(fontSize: 15.0, color: whiteFont),
-
-
-      ),
+      /// Card Widget
       cardTheme: CardTheme(
         elevation: 0.0,
         color: blackBackground,
@@ -109,12 +110,7 @@ class VscheduleApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-
-      fontFamily: 'Quicksand',
-
-
+      cardColor: blackBackground,
     );
   }
-
-
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-enum EventState { PAST, CURRENT, FUTURE }
+import 'event_widget.dart';
+
+
 
 /// Middle widget of ScheduleScreen.
 ///
@@ -11,18 +13,18 @@ enum EventState { PAST, CURRENT, FUTURE }
 class EventLineBulletWidget extends StatelessWidget {
 
   // TODO: Variable name conflicts "StatelessWidget"
-  EventState _state;
+  final ScheduleEventState _state;
 
   EventLineBulletWidget(this._state);
 
   @override
   Widget build(BuildContext context) {
     switch (_state) {
-      case EventState.PAST:
+      case ScheduleEventState.PAST:
         return getPast(context);
-      case EventState.CURRENT:
+      case ScheduleEventState.CURRENT:
         return getCurrent(context);
-      case EventState.FUTURE:
+      case ScheduleEventState.FUTURE:
         return getFuture(context);
     }
   }

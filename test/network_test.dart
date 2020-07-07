@@ -1,8 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:http/http.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
+
+
+
 
 void main() {
 
@@ -14,7 +17,7 @@ void main() {
     String entry = el.nodes[4].nodes[0].nodes[0].text;
     String room = el.nodes[5].nodes[0].nodes[0].nodes[0].text;
     String teacher = el.nodes[6].nodes[0].nodes[0].nodes[0].nodes[0].text;
-    return ScheduleEvent.fromStrings(day, from, until, course, entry, room, teacher, "1", "0");
+    return ScheduleEvent.fromStrings(day, from, until, course, entry, room, teacher);
   }
 
   test('NetworkService test', () async {
@@ -45,8 +48,6 @@ void main() {
     Response result = await post(INSIS_ROOT + "/auth/", headers: loginHeaders, body: body);
     print(result.statusCode);
 
-
-
     String uisAuth = result.headers["set-cookie"].split(';')[0];
 
     Map<String, String> scheduleHeaders = {
@@ -68,7 +69,6 @@ void main() {
       "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) snap Chromium/80.0.3987.132 Chrome/80.0.3987.132 Safari/537.36"
     };
 
-
     result = await get("https://insis.vse.cz/auth/katalog/rozvrhy_view.pl?osobni=1&z=1&k=1&f=0&studijni_zpet=0&rozvrh=2935&rozvrh=2934&rozvrh=2875&format=list&zobraz=Zobrazit",
         headers: scheduleHeaders);
     Document dom = parse(result.body);
@@ -83,16 +83,10 @@ void main() {
 
   });
 
-
   test('exception?', () async {
     Response res = await get("https://insis.vse.cz/auth");
     print(res.statusCode);
 
   });
-
-
-
-
-
 
 }

@@ -1,14 +1,7 @@
-
-// with must extend extended Widget/Object
-import 'dart:io';
-
-import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 import '../logging/logger.dart';
-
 import '../models/schedule_event.dart';
 import '../resources/repository.dart';
 
@@ -55,26 +48,24 @@ class LoginBloc {
     repository.saveCredentials();
     List<ScheduleEvent> schedule;
 
-    try {
-      schedule = await repository.getDaySchedule(Day.Mon);
-
-    } on SocketException catch(networkExc) {
-      // no internet
-      _exception.add("Zkontroluj připojení k internetu.");
-      _loading.add(false);
-      return false;
-
-    } on ClientException catch(loginExc) {
-      // wrong credentials
-      _exception.add("Špatné přihlašovací údaje.");
-      _loading.add(false);
-      return false;
-
-    } catch (e) {
-      _exception.add("Něco se nepovedlo, zkus to za chvíli.");
-      _loading.add(false);
-      return false;
-    }
+    // TODO: solve "no-schedule" problem,
+//    try {
+//      schedule = await repository.getDaySchedule(Day.Mon);
+//    } on SocketException catch(networkExc) {
+//      // no internet
+//      _exception.add("Zkontroluj připojení k internetu.");
+//      _loading.add(false);
+//      return false;
+//    } on ClientException catch(loginExc) {
+//      // wrong credentials
+//      _exception.add("Špatné přihlašovací údaje.");
+//      _loading.add(false);
+//      return false;
+//    } catch (e) {
+//      _exception.add("Něco se nepovedlo, zkus to za chvíli.");
+//      _loading.add(false);
+//      return false;
+//    }
 
     _loading.add(false);
     _exception.drain();

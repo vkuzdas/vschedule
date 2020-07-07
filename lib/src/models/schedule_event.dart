@@ -1,139 +1,128 @@
-enum Day { Mon, Tue, Wed, Thu, Fri, Sat, Sun }
-enum Entry { Lecture, Seminar }
+enum Entry { LECTURE, SEMINAR }
 
+/// Model class of most important object which is a single event in a schedule
+///
+/// An instance is defined by [_from] and [_until] fields. These are DateTime information
+/// about when does the event occur in the schedule. Event takes place every week periodically.
+/// [_BASE_YEAR], [_BASE_MONTH] and [_BASE_DAY] variables are integers denoting first day of the semester (Monday).
+/// Variables are used internally as reference dates since applications concern is Day, Hours and Minutes only.
 class ScheduleEvent {
 
-  Day day;
-  String from;
-  String until;
-  String course; // TODO split into ident and course?
-  Entry entry;
-  String room;
-  String teacher;
-  bool display;
-  int priority;
+  // arbitrary reference date (start of winter semester of 2020, can be random as long as BASE_DATETIME is  Monday)
+  final int _BASE_YEAR  = 2020;
+  final int _BASE_MONTH = 9;
+  final int _BASE_DAY   = 21;
 
-  ScheduleEvent(this.day, this.from, this.until, this.course, this.entry, this.room, this.teacher, this.display, this.priority);
+  DateTime  _from;    // When does the event start?                               Ex.: "10:30"
+  DateTime  _until;   // When does the event end?                                 Ex.: "10:30"
+  Entry     _entry;   // Is the event Seminar or a Lecture? (Přednáška x Cvičení) Ex.: "Lecture", "Seminar"
+  String    _course;  // Full name of the course, includes ident num.             Ex.: "4EK212 Quantitative Management"
+  String    _room;    // Room number.                                             Ex.: "SB 109", "NB A", "Vencovského aula"
+  String    _teacher; // Full name of the teacher.                                Ex.: "J. Sekničková"
 
-  ScheduleEvent.fromJson(Map<String, dynamic> parsedJson) {
-    this.day       = getDayFromString(parsedJson["day"]);
-    this.from      = parsedJson["from"];
-    this.until     = parsedJson["until"];
-    this.course    = parsedJson["course"];
-    this.entry     = getEntryFromString(parsedJson["entry"]);
-    this.room      = parsedJson["room"];
-    this.teacher   = parsedJson["teacher"];
-    this.display   = parsedJson["display"];
-    this.priority  = parsedJson["priority"];
-  }
-
-  ScheduleEvent.fromDb(Map<String, dynamic> parsedJson) {
-    this.day       = getDayFromString(parsedJson['day']);
-    this.from      = parsedJson['from'];
-    this.until     = parsedJson['until'];
-    this.course    = parsedJson['course'];
-    this.entry     = getEntryFromString(parsedJson['entry']);
-    this.room      = parsedJson['room'];
-    this.teacher   = parsedJson['teacher'];
-    this.display   = parsedJson['display'] == 1;
-    this.priority  = parsedJson['priority'];
-  }
 
   ScheduleEvent.fromStrings(
       String day, String from, String until,
       String course, String entry, String room,
-      String teacher, String display, String priority
+      String teacher
   ) {
-    this.day = getDayFromString(day);
-    this.from = from;
-    this.until = until;
-    this.course = course;
-    this.entry = getEntryFromString(entry);
-    this.room = room;
-    this.teacher = teacher;
-    this.display = display == "1";
-    this.priority = int.parse(priority);
+    this._from    = _createDateTime(day, from);
+    this._until   = _createDateTime(day, until);
+    this._entry   = _parseEntry(entry);
+    this._course  = course;
+    this._room    = room;
+    this._teacher = teacher;
   }
 
-
-
-  Map<String, dynamic> toMapForDb() {
-    return <String, dynamic>
-    {
-      "day"      : getDayString(),
-      "[from]"     : from,
-      "until"    : until,
-      "course"   : course,
-      "entry"    : getEntryString(),
-      "room"     : room,
-      "teacher"  : teacher,
-      "display"  : (display == true ? 1 : 0),
-      "priority" : priority
-    };
-  }
-
-
-
-
-
-
-
-
-  Day getDayFromString(String day) {
-    day = "Day.$day";
-    Day d = Day.values.firstWhere((d) => d.toString() == day, orElse: () => null);
-    if (d == null) {
-      throw Exception;
+  Entry _parseEntry(String entry) {
+    entry = "Entry." + entry.toUpperCase();
+    if (entry == Entry.LECTURE.toString()) {
+      return Entry.LECTURE;
     }
-    return d;
-  }
-
-  Entry getEntryFromString(String entry) {
-    entry = "Entry.$entry";
-    Entry e = Entry.values
-        .firstWhere((e) => e.toString() == entry, orElse: () => null);
-    if (e == null) {
-      throw Exception;
+    else if (entry == Entry.SEMINAR.toString()) {
+      return Entry.SEMINAR;
     }
-    return e;
-  }
-
-  String getEntryString() {
-    if (entry == null) {
-      return null;
-    }
-    if (entry == Entry.Seminar) {
-      return "Seminar";
-    }
-    if (entry == Entry.Lecture) {
-      return "Lecture";
+    else {
+      throw FormatException("Got unknown ENTRY on ScheduleEvent Construction.");
     }
   }
 
-  String getDayString() {
-    if (day == null) {
-      return null;
+  DateTime _createDateTime(String day, String time) {
+    int dayInt;
+    switch (day) {
+      case "Mon" :
+        dayInt = DateTime.monday;
+        break;
+      case "Tue" :
+        dayInt = DateTime.tuesday;
+        break;
+      case "Wed" :
+        dayInt = DateTime.wednesday;
+        break;
+      case "Thu" :
+        dayInt = DateTime.thursday;
+        break;
+      case "Fri" :
+        dayInt = DateTime.friday;
+        break;
+      case "Sun" :
+        dayInt = DateTime.sunday;
+        break;
+      case "Sat" :
+        dayInt = DateTime.saturday;
+        break;
+      default:
+        throw FormatException("Got unknown DAY abbreviation on ScheduleEvent Construction.");
     }
-    return day.toString().substring(4,7);
+    int hours = int.parse(time.split(":")[0]);
+    int minutes = int.parse(time.split(":")[1]);
+    return DateTime(_BASE_YEAR, _BASE_DAY + dayInt, _BASE_MONTH, hours, minutes);
   }
 
   bool operator ==(that) {
-    return (this.teacher == that.teacher &&
-        this.room == that.room &&
-        this.course == that.course &&
-        this.from == that.from &&
-        this.until == that.until &&
-        this.day == that.day &&
-        this.entry == that.entry &&
-        (this.display == that.display) &&
-        this.priority == that.priority
+    return (
+        this._from == that.from &&
+            this._until == that.until &&
+            this._entry == that.entry &&
+            this._teacher == that.teacher &&
+            this._room == that.room &&
+            this._course == that.course
     );
   }
 
   @override
   String toString() {
-    return "{day: $day, from: $from, until: $until, " +
-           "course: $course, entry: $entry, room: $room"+
-           "teacher: $teacher, display: $display, priority: $priority}";
+    return 'ScheduleEvent{from: $_from, until: $_until, entry: $_entry, course: $_course, room: $_room, teacher: $_teacher}';
   }
+
+
+  /// returns values between { [DateTime.monday],... [DateTime.saturday] }
+  int getDayNumber() {
+    return _until.day;
+  }
+
+  String getFrom() {
+    return "" + _from.hour.toString() +":"+ _from.minute.toString();
+  }
+
+  String getUntil() {
+    return "" + _until.hour.toString() +":"+ _until.minute.toString();
+  }
+
+  String getTeacher() {
+    return this._teacher;
+  }
+
+  String getEntry() {
+    return this._entry.toString().split(".")[0];
+  }
+
+  String getCourse() {
+    return this._course;
+  }
+
+  String getRoom() {
+    return this._room;
+  }
+
 }

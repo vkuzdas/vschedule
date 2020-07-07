@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class EventCard extends StatelessWidget {
+class EventCardWidget extends StatelessWidget {
 
-  Color _color;
-  double _height;
-  double _width;
-  String _course;
-  String _teacher;
-  String _room;
+  final Color _color;
+  final double _height;
+  final double _width;
+  final String _course;
+  final String _teacher;
+  final String _room;
 
   //TODO: how will you differ between seminar and lecture
 
 
 
-  EventCard(this._color, this._height, this._width, this._course, this._teacher,
+  EventCardWidget(this._color, this._height, this._width, this._course, this._teacher,
       this._room);
 
   @override
