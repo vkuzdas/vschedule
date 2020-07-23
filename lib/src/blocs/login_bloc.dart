@@ -1,16 +1,14 @@
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../logging/logger.dart';
-import '../models/schedule_event.dart';
 import '../resources/repository.dart';
 
 
 
 class LoginBloc {
 
-  Logger _logger = getLogger("LoginBloc");
-  Repository repository = Repository();
+  final _log = Logger('LoginBloc');
+  Repository repository = Repository.getInstance();
 
   final _xname = BehaviorSubject<String>(seedValue: "");
   final _password = BehaviorSubject<String>(seedValue: "");
@@ -43,12 +41,13 @@ class LoginBloc {
       return false;
     }
 
-    _logger.i("login submited");
+    _log.info("login submited");
     repository.setCredentials(usr, pwd);
     repository.saveCredentials();
-    List<ScheduleEvent> schedule;
+//    List<ScheduleEvent> schedule;
 
-    // TODO: solve "no-schedule" problem,
+// TODO: solve "no-schedule" problem,
+
 //    try {
 //      schedule = await repository.getDaySchedule(Day.Mon);
 //    } on SocketException catch(networkExc) {

@@ -1,34 +1,46 @@
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client_provider.dart';
 
-import '../logging/logger.dart';
 import '../models/schedule_event.dart';
 import 'credentials/credential_provider.dart';
-import 'db/db_event_provider.dart';
+import 'db/db_provider.dart';
+
+// SINGLETON:
+// 1) private constructor
+// 2) private static instance
+// 3) instance accesor
+
+
 
 class Repository {
 
-  static final Repository _instance = Repository._internal();
+  // private static instance
+  static Repository _instance = new Repository._singletonConstructor();
 
-  Logger _logger = getLogger("Repository");
-  DBEventProvider _dbProvider;
+  final _log = Logger("Repository");
+
+  DBProvider _dbProvider;
   InsisClientProvider _apiProvider;
   CredentialProvider _credentialProvider;
   String _usr;
   String _pwd;
 
-  factory Repository() {
-    _instance._init();
+
+  // private constructor
+  Repository._singletonConstructor() {
+    _dbProvider = DBProvider();
+    _apiProvider = InsisClientProvider();
+    _credentialProvider = CredentialProvider();
+    _log.info("Repository initialized.");
+  }
+
+  // instance accesor
+  static Repository getInstance() {
     return _instance;
   }
 
-  Repository._internal();
-
   void _init() {
-    _dbProvider = DBEventProvider();
-    _apiProvider = InsisClientProvider();
-    _credentialProvider = CredentialProvider();
-    _logger.i("Repository initialized.");
+
   }
 
 
@@ -48,6 +60,10 @@ class Repository {
 //    return todaySchedule;
 //  }
 
+  Future<List<ScheduleEvent>> getEventsOnDay(String day) {
+    return _dbProvider.getEventsOnDay(day);
+  }
+
 
   /* Database */
   updateScheduleEvent(ScheduleEvent event) {
@@ -58,13 +74,13 @@ class Repository {
     wholeSchedule.forEach((event) {
       _dbProvider.saveEvent(event);
     });
-    _logger.i("Schedule saved.");
+    _log.info("Schedule saved.");
   }
 
 
   /* Credentials: */
   saveCredentials() {
-    _logger.i("Credentials saved: [" + _usr + ", " + _pwd + "]");
+    _log.info("Credentials saved: [" + _usr + ", " + _pwd + "]");
     if (_usr == null || _pwd == null) {
       throw Exception("Credentials were not set.");
     }
@@ -72,7 +88,7 @@ class Repository {
   }
 
   setCredentials(String usr, String pwd) {
-    _logger.i("Credentials set: [" + usr + ", " + pwd + "]");
+    _log.info("Credentials set: [" + usr + ", " + pwd + "]");
     this._usr = usr;
     this._pwd = pwd;
   }

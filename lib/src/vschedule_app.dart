@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/resources/repository.dart';
-import 'package:vseschedule_03/src/ui/schedule_screen.dart';
+import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
 import 'ui/login_screen.dart';
@@ -30,7 +31,14 @@ class VscheduleApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
     ]);
 
-    repo = Repository();
+
+    /// Logging setup
+    Logger.root.level = Level.ALL; // defaults to Level.INFO
+    Logger.root.onRecord.listen((record) {
+      print('${record.level.name}: ${record.time}: ${record.message}');
+    });
+
+    repo = Repository.getInstance();
     bool signedInPreviously = repo.isEmpty();
 
     return MaterialApp(

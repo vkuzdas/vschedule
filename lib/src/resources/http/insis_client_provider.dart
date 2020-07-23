@@ -1,6 +1,5 @@
 
-import 'package:logger/logger.dart';
-import 'package:vseschedule_03/src/logging/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client.dart';
 
@@ -8,7 +7,7 @@ class InsisClientProvider {
 
   //TODO does not need to be a Signleton
   static final InsisClientProvider _instance = InsisClientProvider._internal();
-  Logger _logger = getLogger("InsisClientProvider");
+  final _log = Logger("InsisClientProvider");
   InsisClient _client;
 
 

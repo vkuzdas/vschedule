@@ -1,14 +1,14 @@
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
-import 'package:vseschedule_03/src/logging/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 
 class InsisClient {
 
 
   static final InsisClient _instance = InsisClient._internal();
-  final _logger = getLogger("InsisClient");
+  final _log = Logger("InsisClient");
 
   String _INSIS_ROOT = "https://insis.vse.cz";
   String _SCHEDULE_URI = "/auth/katalog/rozvrhy_view.pl?osobni=1&z=1&k=1&f=0&studijni_zpet=0&rozvrh=2935&rozvrh=2934&rozvrh=2875&format=list&zobraz=Zobrazit";
@@ -60,7 +60,7 @@ class InsisClient {
       throw ClientException("Server responded with " + res.statusCode.toString() + ": " + res.reasonPhrase + ". Try entering valid credentials.");
     }
 
-    _logger.i(res.reasonPhrase + " " + res.statusCode.toString());
+    _log.info(res.reasonPhrase + " " + res.statusCode.toString());
     String uisAuth = res.headers["set-cookie"].split(';')[0];
 
     _headers.addAll({"Cookie": uisAuth});
@@ -69,7 +69,7 @@ class InsisClient {
   Future<List<ScheduleEvent>> getSchedule() async {
     Response res = await get(_INSIS_ROOT + _SCHEDULE_URI, headers: _headers);
 
-    _logger.i(res.reasonPhrase + " " + res.statusCode.toString());
+    _log.info(res.reasonPhrase + " " + res.statusCode.toString());
 
     Document dom = parse(res.body);
     List<Element> scheduleElement = dom.querySelectorAll('#tmtab_1 > tbody > tr');

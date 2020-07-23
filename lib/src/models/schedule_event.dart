@@ -125,4 +125,11 @@ class ScheduleEvent {
     return this._room;
   }
 
+  DateTime getDateTimeFrom() {
+    return this._from;
+  }
+
+  DateTime getDateTimeUntil() {
+    return this._until;
+  }
 }

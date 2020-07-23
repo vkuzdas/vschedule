@@ -1,12 +1,11 @@
 
-import '../../logging/logger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 
 class CredentialProvider {
   static final CredentialProvider _instance = CredentialProvider._internal();
 
-  Logger _logger = getLogger("CredentialProvider");
+  final _log = Logger("CredentialProvider");
   FlutterSecureStorage _storage;
   final String _USR = "usr";
   final String _PWD = "pwd";

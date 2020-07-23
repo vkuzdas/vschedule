@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:logger/logger.dart';
-import '../blocs/schedule_bloc_provider.dart';
-import '../logging/logger.dart';
-import '../ui/schedule_screen.dart';
+import 'package:logging/logging.dart';
 
 import '../blocs/login_bloc_provider.dart';
 import '../blocs/login_bloc.dart';
@@ -29,13 +26,12 @@ class LoginScreen extends StatefulWidget { // stateful since we will be showing 
 
 class LoginScreenState extends State<LoginScreen> {
   LoginBloc bloc;
-  Logger logger;
+  final _log = Logger('LoginScreenState');
 
 
   @override
   void initState() {
     super.initState();
-    logger = getLogger("LoginScreenState");
   }
 
   @override
@@ -123,7 +119,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget progressIndicator({double height}) {
-    logger.i("ProgressIndicator rebuilt");
+    _log.info("ProgressIndicator rebuilt");
     return LinearProgressIndicator(
       valueColor: AlwaysStoppedAnimation<Color>(greenBackground),
       backgroundColor: blackBackground,
@@ -212,7 +208,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget submitButton(LoginBloc bloc) {
-    logger.i("SubmitButton rebuilt");
+    _log.info("SubmitButton rebuilt");
     return StreamBuilder(
       stream: bloc.pwdXnmCombined,
       builder: (context, snapshot) {
