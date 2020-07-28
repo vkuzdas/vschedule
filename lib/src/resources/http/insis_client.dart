@@ -6,8 +6,6 @@ import 'package:vseschedule_03/src/models/schedule_event.dart';
 
 class InsisClient {
 
-
-  static final InsisClient _instance = InsisClient._internal();
   final _log = Logger("InsisClient");
 
   String _INSIS_ROOT = "https://insis.vse.cz";
@@ -17,12 +15,18 @@ class InsisClient {
   Map<String, String> _body;
 
 
-  factory InsisClient() {
-    _instance._init();
-    return _instance;
+  // private static instance
+  static final InsisClient _instance = InsisClient._singletonConstructor();
+
+  // private static constructor
+  InsisClient._singletonConstructor() {
+    _init();
   }
 
-  InsisClient._internal();
+  // instance accesor
+  static InsisClient getInstance() {
+    return _instance;
+  }
 
   
   _init() {

@@ -1,25 +1,24 @@
-
 import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client.dart';
 
+
 class InsisClientProvider {
 
-  //TODO does not need to be a Signleton
-  static final InsisClientProvider _instance = InsisClientProvider._internal();
   final _log = Logger("InsisClientProvider");
   InsisClient _client;
 
+  // private static instance
+  static final InsisClientProvider _instance = InsisClientProvider._singletonContructor();
 
-  factory InsisClientProvider() {
-    _instance._init();
-    return _instance;
+  // private static constructor
+  InsisClientProvider._singletonContructor() {
+    _client = InsisClient.getInstance();
   }
 
-  InsisClientProvider._internal();
-
-  void _init() async {
-    _client = InsisClient();
+  // instance accesor
+  static InsisClientProvider getInstance() {
+    return _instance;
   }
 
 
@@ -28,4 +27,5 @@ class InsisClientProvider {
     List<ScheduleEvent> res = await _client.getSchedule();
     return res;
   }
+
 }

@@ -1,9 +1,7 @@
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
 
 class CredentialProvider {
-  static final CredentialProvider _instance = CredentialProvider._internal();
 
   final _log = Logger("CredentialProvider");
   FlutterSecureStorage _storage;
@@ -11,17 +9,19 @@ class CredentialProvider {
   final String _PWD = "pwd";
 
 
-  factory CredentialProvider() {
-    _instance._init();
+  // private static instance
+  static final CredentialProvider _instance = CredentialProvider._singletonConstructor();
+
+  // private constructor
+  CredentialProvider._singletonConstructor(){
+    _storage = new FlutterSecureStorage();
+  }
+
+  // instance accesor
+  static CredentialProvider getInstance() {
     return _instance;
   }
 
-  CredentialProvider._internal();
-
-
-  void _init() {
-    _storage = new FlutterSecureStorage();
-  }
 
   void saveCredentials(String usr, String pwd) async {
     await _storage.write(key: _USR, value: usr);
@@ -36,7 +36,7 @@ class CredentialProvider {
     return await _storage.read(key: _USR);
   }
 
-  void ommit() async {
+  void deleteAll() async {
     await _storage.deleteAll();
   }
 }

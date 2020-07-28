@@ -19,6 +19,14 @@ class ScheduleScreen extends StatefulWidget {
 class ScheduleScreenState extends State<ScheduleScreen> {
 
 
+  List<Widget> buildSchedule() {
+    return <Widget>[
+      ScheduleEventWidget(
+          ScheduleEvent.fromStrings("Mon", "09:15", "10:30", "Java", "Seminar", "SB 123", "Pelikan"),
+          ScheduleEventState.PAST
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +53,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             height: bodyHeight,
             color: Color(0xFF27292B),
             child: Column(
-              children: <Widget>[
-                ScheduleEventWidget(
-                  ScheduleEvent.fromStrings("Mon", "09:15", "10:30", "Java", "Seminar", "SB 123", "Pelikan"),
-                  ScheduleEventState.PAST
-                ),
-              ],
+              children: buildSchedule()
             )
           ),
           bottomNavigationBar: scheduleFooter(deviceHeight)

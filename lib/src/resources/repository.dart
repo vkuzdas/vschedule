@@ -5,17 +5,7 @@ import '../models/schedule_event.dart';
 import 'credentials/credential_provider.dart';
 import 'db/db_provider.dart';
 
-// SINGLETON:
-// 1) private constructor
-// 2) private static instance
-// 3) instance accesor
-
-
-
 class Repository {
-
-  // private static instance
-  static Repository _instance = new Repository._singletonConstructor();
 
   final _log = Logger("Repository");
 
@@ -26,11 +16,14 @@ class Repository {
   String _pwd;
 
 
+  // private static instance
+  static final Repository _instance = new Repository._singletonConstructor();
+
   // private constructor
   Repository._singletonConstructor() {
-    _dbProvider = DBProvider();
-    _apiProvider = InsisClientProvider();
-    _credentialProvider = CredentialProvider();
+    _dbProvider = DBProvider.getInstance();
+    _apiProvider = InsisClientProvider.getInstance();
+    _credentialProvider = CredentialProvider.getInstance();
     _log.info("Repository initialized.");
   }
 
@@ -38,11 +31,6 @@ class Repository {
   static Repository getInstance() {
     return _instance;
   }
-
-  void _init() {
-
-  }
-
 
   /* Resource management: */
 //  Future<List<ScheduleEvent>> getDaySchedule(String day) async {
@@ -72,7 +60,7 @@ class Repository {
 
   _saveScheduleToDB(List<ScheduleEvent> wholeSchedule) {
     wholeSchedule.forEach((event) {
-      _dbProvider.saveEvent(event);
+      _dbProvider.insertEvent(event);
     });
     _log.info("Schedule saved.");
   }

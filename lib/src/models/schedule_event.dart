@@ -11,7 +11,7 @@ class ScheduleEvent {
   // arbitrary reference date (start of winter semester of 2020, can be random as long as BASE_DATETIME is  Monday)
   final int _BASE_YEAR  = 2020;
   final int _BASE_MONTH = 9;
-  final int _BASE_DAY   = 21;
+  final int _BASE_DAY   = 20; // SATURDAY
 
   DateTime  _from;    // When does the event start?                               Ex.: "10:30"
   DateTime  _until;   // When does the event end?                                 Ex.: "10:30"
@@ -76,7 +76,8 @@ class ScheduleEvent {
     }
     int hours = int.parse(time.split(":")[0]);
     int minutes = int.parse(time.split(":")[1]);
-    return DateTime(_BASE_YEAR, _BASE_DAY + dayInt, _BASE_MONTH, hours, minutes);
+    DateTime createdDateTime = DateTime(_BASE_YEAR, _BASE_MONTH, _BASE_DAY + dayInt, hours, minutes);
+    return createdDateTime;
   }
 
   bool operator ==(that) {
@@ -98,7 +99,7 @@ class ScheduleEvent {
 
   /// returns values between { [DateTime.monday],... [DateTime.saturday] }
   int getDayNumber() {
-    return _until.day;
+    return _until.weekday;
   }
 
   String getFrom() {
