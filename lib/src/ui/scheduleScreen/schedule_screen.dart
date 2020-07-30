@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 import 'package:vseschedule_03/src/resources/repository.dart';
 
@@ -18,51 +19,103 @@ class ScheduleScreen extends StatefulWidget {
 
 class ScheduleScreenState extends State<ScheduleScreen> {
 
+  ScheduleBloc bloc;
+  final Repository repository = Repository.getInstance();
+  final _log = Logger('ScheduleScreen');
 
-  List<Widget> buildSchedule() {
-    return <Widget>[
-      ScheduleEventWidget(
-          ScheduleEvent.fromStrings("Mon", "09:15", "10:30", "Java", "Seminar", "SB 123", "Pelikan"),
-          ScheduleEventState.PAST
-      ),
-    ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+//    bloc.dispose();
+    super.dispose();
+  }
+
+
+
+  Widget buildSchedule() {
+
+    return StreamBuilder(
+      stream: bloc.weekday,
+      builder: (streamContext, streamSnapshot) {
+        if (streamSnapshot.connectionState == ConnectionState.active) {
+
+          return FutureBuilder(
+            future: repository.getEventsOnWeekday(streamSnapshot.data),
+            builder: (futureContext, futureSnapshot) {
+              if(futureSnapshot.connectionState == ConnectionState.done) {
+
+                List<ScheduleEvent> daySchedule = futureSnapshot.data;
+                List<ScheduleEventWidget> dayWidgets = List<ScheduleEventWidget>();
+                if(daySchedule != null) {
+                  daySchedule.forEach((ev) => dayWidgets.add(ScheduleEventWidget(ev, ScheduleEventState.PAST)));
+                }
+                return Column(
+                  children: dayWidgets,
+                );
+
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          );
+
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+    bloc = ScheduleBlocProvider.of(context);
 
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
     final double appBarHeight = deviceHeight * 0.27;
     final double bottomBarHeight = deviceHeight * 0.1;
     final double bodyHeight = deviceHeight - (appBarHeight + bottomBarHeight);
-    final bloc = ScheduleBloc();
-    final Repository repository = Repository.getInstance();
 
-    return ScheduleBlocProvider(
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("images/schedule_pixel2_960.jpg"),
-              fit: BoxFit.cover),
+    return Container(
+      /// Background
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage("images/schedule_pixel2_960.jpg"),
+            fit: BoxFit.cover
         ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: scheduleHeader(deviceHeight, deviceWidth),
-          body: Container(
-            height: bodyHeight,
-            color: Color(0xFF27292B),
-            child: Column(
-              children: buildSchedule()
-            )
-          ),
-          bottomNavigationBar: scheduleFooter(deviceHeight)
+      ),
+
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        /// DatePickerWidget
+        //TODO: pass in bloc, stream dates into it
+        appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
+        body: Container(
+          height: bodyHeight,
+          color: Color(0xFF27292B),
+          child: buildSchedule(),
+//          child: Column(
+//            children: buildSchedule()
+//          )
         ),
+        /// Bottom navigation
+        bottomNavigationBar: scheduleFooter(deviceHeight)
       ),
     );
   }
 
-  PreferredSize scheduleHeader(double deviceHeight, double deviceWidth) {
+  PreferredSize scheduleHeader(ScheduleBloc bloc, double deviceHeight, double deviceWidth) {
+
+    // GETS CALLED TWICE, WTF???
+    _log.info("sched header");
+
     return PreferredSize(
       preferredSize: Size.fromHeight(deviceHeight * 0.27),
       child: Column(
@@ -79,7 +132,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             ),
           ),
           Container(height: deviceHeight * 0.02),
-          DatePicker()
+          DatePicker(onChanged: bloc.weekdaySink,)
         ],
       ),
     );

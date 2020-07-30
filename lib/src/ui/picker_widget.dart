@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class DatePicker extends StatefulWidget {
+
+  Function(int) onChanged;
+  DatePicker({this.onChanged}) : assert(onChanged != null);
+
   @override
-  State<StatefulWidget> createState() {
-    return DatePickerState();
-  }
+  State<StatefulWidget> createState() => DatePickerState();
 }
 
 class DatePickerState extends State<DatePicker> {
@@ -44,7 +46,7 @@ class DatePickerState extends State<DatePicker> {
     super.initState();
     _NOW = DateTime.now();
     _selected = 0;      /// today is 0th index
-    _selectedMonth = getMonthTag(daysBack(_selected));
+    _selectedMonth = getMonthTag(daysInFuture(_selected));
   }
 
   @override
@@ -67,14 +69,15 @@ class DatePickerState extends State<DatePicker> {
         Container( // day picker
           height: childSize,
           child: RotatedBox(
-            quarterTurns: 1,
+            quarterTurns: 3,
             child: ListWheelScrollView.useDelegate(
               onSelectedItemChanged: (int) {
+                widget.onChanged(_NOW.add(Duration(days: int)).weekday); // pass selected into bloc sink
                 setState(() { /// Rebuild selectedWidget, possibly Month text
                   _selected = int;
                   _selectedMonth =
-                  ( getMonthTag(daysBack(int)) == _selectedMonth ) ?
-                  _selectedMonth : getMonthTag(daysBack(int));
+                  ( getMonthTag(daysInFuture(int)) == _selectedMonth ) ?
+                  _selectedMonth : getMonthTag(daysInFuture(int));
                 });
               },
               perspective: double.minPositive,
@@ -83,7 +86,7 @@ class DatePickerState extends State<DatePicker> {
               itemExtent: childSize, // 7 days per width
               childDelegate: ListWheelChildBuilderDelegate(
                   builder: (ctxt, int) {
-                    return RotatedBox(quarterTurns: 3,
+                    return RotatedBox(quarterTurns: 1,
                         child: selectedWidget(int)
                     );
                   }
@@ -102,11 +105,11 @@ class DatePickerState extends State<DatePicker> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            DateTime.now().subtract(Duration(days: i)).day.toString(), /// [1..31]
+            _NOW.add(Duration(days: i)).day.toString(), /// [1..31]
             style: TextStyle(fontFamily: "Poppins" ,fontSize: 16, fontWeight: FontWeight.w800),
           ),
           Text(
-            _getDayTag(DateTime.now().subtract(Duration(days: i))), /// [Po...Ne]
+            _getDayTag(_NOW.add(Duration(days: i))), /// [Po...Ne]
             style: TextStyle(fontFamily: "Poppins" ,fontSize: 16, fontWeight: FontWeight.w800),
           ),
         ],
@@ -116,7 +119,7 @@ class DatePickerState extends State<DatePicker> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(DateTime.now().subtract(Duration(days: i)).day.toString(), style: TextStyle(color: Color(0x88B9B9B9)),),
+          Text(DateTime.now().add(Duration(days: i)).day.toString(), style: TextStyle(color: Color(0x88B9B9B9)),),
           Text(""),
         ],
       );
@@ -133,8 +136,8 @@ class DatePickerState extends State<DatePicker> {
     return _monthMap[time.month]; /// [Leden...Prosinec]
   }
 
-  DateTime daysBack(int i) {
-    return _NOW.subtract(Duration(days:i));
+  DateTime daysInFuture(int i) {
+    return _NOW.add(Duration(days:i));
   }
 
 }

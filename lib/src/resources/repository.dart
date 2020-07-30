@@ -48,8 +48,8 @@ class Repository {
 //    return todaySchedule;
 //  }
 
-  Future<List<ScheduleEvent>> getEventsOnDay(String day) {
-    return _dbProvider.getEventsOnDay(day);
+  Future<List<ScheduleEvent>> getEventsOnWeekday(int weekday) {
+    return _dbProvider.getEventsOnWeekday(weekday);
   }
 
 

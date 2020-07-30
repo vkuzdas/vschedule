@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
 
-import '../blocs/login_bloc_provider.dart';
 import '../blocs/login_bloc.dart';
+import '../blocs/login_bloc_provider.dart';
 
 
 
@@ -26,7 +26,7 @@ class LoginScreen extends StatefulWidget { // stateful since we will be showing 
 
 class LoginScreenState extends State<LoginScreen> {
   LoginBloc bloc;
-  final _log = Logger('LoginScreenState');
+  final _log = Logger('LoginScreen');
 
 
   @override

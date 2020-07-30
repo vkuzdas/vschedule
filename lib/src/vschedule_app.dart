@@ -5,6 +5,7 @@ import 'package:vseschedule_03/src/resources/repository.dart';
 import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
+import 'blocs/schedule_bloc_provider.dart';
 import 'ui/login_screen.dart';
 
 // Should be moved to theme
@@ -35,7 +36,7 @@ class VscheduleApp extends StatelessWidget {
     /// Logging setup
     Logger.root.level = Level.ALL; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.time}: ${record.message}');
+      print('${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
     repo = Repository.getInstance();
@@ -52,7 +53,7 @@ class VscheduleApp extends StatelessWidget {
       initialRoute: signedInPreviously ? "/login" : "/schedule",
       routes: {
         "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
-        "/schedule": (ctxt) => ScheduleScreen()
+        "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen())
       },
     );
   }

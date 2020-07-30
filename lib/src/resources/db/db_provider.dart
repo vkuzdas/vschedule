@@ -111,14 +111,15 @@ class DBProvider {
         whereArgs: [updateEvent.getDayNumber(), updateEvent.getFrom(), updateEvent.getRoom()]);
   }
 
-  Future<List<ScheduleEvent>> getEventsOnDay(String day) async {
-    List<ScheduleEvent> schedule;
-    List<Map<String, dynamic>> result = await _db.query("ScheduleEvents", columns: null, where: "day = ?", whereArgs: [day],);
-    result.forEach((element) {
+  Future<List<ScheduleEvent>> getEventsOnWeekday(int weekday) async {
+    List<ScheduleEvent> schedule = new List<ScheduleEvent>();
+    List<Map<String, dynamic>> result = await _db.query("ScheduleEvents", columns: null, where: "day = ?", whereArgs: [weekday],);
+    result.forEach((map) {
       schedule.add(ScheduleEvent.fromStrings(
-          element["day"], element["from"], element["until"],
-          element["course"], element["entry"], element["room"],
-          element["teacher"]));
+          map["day"].toString(), map["from"], map["until"],
+          map["course"], map["entry"], map["room"],
+          map["teacher"])
+      );
     });
     return schedule;
   }
@@ -130,17 +131,17 @@ class DBProvider {
   }
 
   void insertTestBatch() {
-    insertEvent(ScheduleEvent.fromStrings("Mon", "09:15", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
+    insertEvent(ScheduleEvent.fromStrings("Mon", "11:00", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Thu", "09:15", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Fri", "09:15", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Tue", "07:30", "09:00", "4IT115 Software Engineering", "Lecture", "Vencovského aula", "A. Buchalcevová"));
     insertEvent(ScheduleEvent.fromStrings("Tue", "09:15", "10:45", "TVSTHA Thai boxing", "Seminar", "CK 0127 (JA)", "T. Vaněk"));
     insertEvent(ScheduleEvent.fromStrings("Tue", "11:00", "12:30", "4EK212 Quantitative Management", "Seminar", "SB 231", "M. Černý"));
-//    saveEvent(ScheduleEvent.fromStrings("Tue", "12:45", "14:15", "3MG216 Fundamentals of Marketing for Students of IT and Statistics", "Seminar", "JM 189 (JM)", "M. Zamazalová"));
-//    saveEvent(ScheduleEvent.fromStrings("Tue", "14:30", "16:00", "4IZ210 Information and Knowledge Processing", "Lecture", "NB D", "J. Rauch"));
-//    saveEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4IT218 Database Management Systems", "Seminar", "SB 202", "H. Palovská"));
-//    saveEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4ST204 Statistics for Informatics", "Seminar", "SB 104", "F. Habarta"));
-//    saveEvent(ScheduleEvent.fromStrings("Wed", "12:45", "14:15", "1FU201 - Accounting I.", "Seminar", "SB 234", "J. Janhubová"));
+    insertEvent(ScheduleEvent.fromStrings("Tue", "12:45", "14:15", "3MG216 Fundamentals of Marketing for Students of IT and Statistics", "Seminar", "JM 189 (JM)", "M. Zamazalová"));
+    insertEvent(ScheduleEvent.fromStrings("Tue", "14:30", "16:00", "4IZ210 Information and Knowledge Processing", "Lecture", "NB D", "J. Rauch"));
+    insertEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4IT218 Database Management Systems", "Seminar", "SB 202", "H. Palovská"));
+    insertEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4ST204 Statistics for Informatics", "Seminar", "SB 104", "F. Habarta"));
+    insertEvent(ScheduleEvent.fromStrings("Wed", "12:45", "14:15", "1FU201 - Accounting I.", "Seminar", "SB 234", "J. Janhubová"));
   }
 
   void deleteAllEntries() {

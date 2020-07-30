@@ -5,13 +5,13 @@ import 'package:vseschedule_03/src/resources/http/insis_client_provider.dart';
 void main() {
 
   test('Success', () async {
-    InsisClientProvider icp = InsisClientProvider();
+    InsisClientProvider icp = InsisClientProvider.getInstance();
     List<ScheduleEvent> schedule = await icp.getSchedule("kuzv06", "3BigElephants");
     expect(schedule.length, 10);
   });
 
   test('Wrong credentials', () async {
-    InsisClientProvider icp = InsisClientProvider();
+    InsisClientProvider icp = InsisClientProvider.getInstance();
     List<ScheduleEvent> schedule = await icp.getSchedule("abc", "efg");
   });
 

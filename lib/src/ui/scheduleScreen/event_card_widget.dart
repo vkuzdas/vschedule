@@ -49,25 +49,31 @@ class EventCardWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 5),
               child: Column(
                 children: <Widget>[
+
+        /// COURSE
                   Container( padding: EdgeInsets.all(5),alignment: Alignment.centerLeft,
                       child: Text(_course, style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
                   ),
+
+        /// TEACHER
                   Row(
                     children: <Widget>[
                       Icon(Icons.person, color: Theme.of(context).colorScheme.secondary,),
                       Container( padding: EdgeInsets.all(2),alignment: Alignment.centerLeft,
-                          child: Text("Pelikán", style: TextStyle(fontSize: 12 ,fontFamily: "Poppins"))
+                          child: Text(_teacher, style: TextStyle(fontSize: 12 ,fontFamily: "Poppins"))
                       ),
                     ],
                   ),
+        /// ROOM
                   Row(
                     children: <Widget>[
                       Icon(Icons.location_on, color: Theme.of(context).colorScheme.secondary,),
                       Container( padding: EdgeInsets.all(2),alignment: Alignment.centerLeft,
-                          child: Text("JM 105", style: TextStyle(fontSize: 12 ,fontFamily: "Poppins"))
+                          child: Text(_room, style: TextStyle(fontSize: 12 ,fontFamily: "Poppins"))
                       ),
                     ],
                   ),
+
                 ],
               ),
             )

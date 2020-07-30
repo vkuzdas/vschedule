@@ -14,6 +14,8 @@ class ScheduleEventWidget extends StatelessWidget {
 
   ScheduleEventWidget(this._scheduleEvent, this._scheduleEventState);
 
+
+
   @override
   Widget build(BuildContext context) {
     Color fontColor = ( _scheduleEventState == ScheduleEventState.PAST ? whiteFontFaded : whiteFont);

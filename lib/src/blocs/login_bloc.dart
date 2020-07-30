@@ -3,7 +3,9 @@ import 'package:rxdart/rxdart.dart';
 
 import '../resources/repository.dart';
 
-
+/// BLoC stands for Business Logic Components. The gist of BLoC is that everything
+/// in the app should be represented as stream of events: widgets submit events;
+/// other widgets will respond. BLoC sits in the middle, managing the conversation.
 
 class LoginBloc {
 

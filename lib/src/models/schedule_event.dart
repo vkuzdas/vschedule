@@ -71,6 +71,27 @@ class ScheduleEvent {
       case "Sat" :
         dayInt = DateTime.saturday;
         break;
+      case "1" :
+        dayInt = DateTime.monday;
+        break;
+      case "2" :
+        dayInt = DateTime.tuesday;
+        break;
+      case "3" :
+        dayInt = DateTime.wednesday;
+        break;
+      case "4" :
+        dayInt = DateTime.thursday;
+        break;
+      case "5" :
+        dayInt = DateTime.friday;
+        break;
+      case "6" :
+        dayInt = DateTime.sunday;
+        break;
+      case "7" :
+        dayInt = DateTime.saturday;
+        break;
       default:
         throw FormatException("Got unknown DAY abbreviation on ScheduleEvent Construction.");
     }
@@ -103,11 +124,13 @@ class ScheduleEvent {
   }
 
   String getFrom() {
-    return "" + _from.hour.toString() +":"+ _from.minute.toString();
+    String minutes = _from.minute == 0 ? "00" : ""+_from.minute.toString();
+    return "" + _from.hour.toString() +":"+ minutes;
   }
 
   String getUntil() {
-    return "" + _until.hour.toString() +":"+ _until.minute.toString();
+    String minutes = _until.minute == 0 ? "00" : ""+_until.minute.toString();
+    return "" + _until.hour.toString() +":"+ minutes;
   }
 
   String getTeacher() {
@@ -115,7 +138,7 @@ class ScheduleEvent {
   }
 
   String getEntry() {
-    return this._entry.toString().split(".")[0];
+    return this._entry.toString().split(".")[1];
   }
 
   String getCourse() {
