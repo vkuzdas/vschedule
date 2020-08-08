@@ -14,7 +14,7 @@ const Color greenBackground = Color(0xFF2C8F4E);
 const Color greenBackgroundFaded = Color(0x882C8F4E);
 const Color greenBackgroundVeryFaded = Color(0xFF508964);
 const Color whiteFont = Color(0xFFB9B9B9);
-const Color whiteFontFaded = Color(0x88B9B9B9);
+const Color whiteFontFaded = Color(0x55B9B9B9);
 const Color orange = Color(0xFFFBAF3F);
 const Color cyan = Color(0xFF27AAE0);
 const Color darkBlue = Color(0xFF3E5BA7);
@@ -34,7 +34,7 @@ class VscheduleApp extends StatelessWidget {
 
 
     /// Logging setup
-    Logger.root.level = Level.ALL; // defaults to Level.INFO
+    Logger.root.level = Level.CONFIG;
     Logger.root.onRecord.listen((record) {
       print('${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });

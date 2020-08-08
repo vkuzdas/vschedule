@@ -33,10 +33,10 @@ class EventLineBulletWidget extends StatelessWidget {
   Column getPast(BuildContext context) {
     return Column(
       children: <Widget>[
-        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.8), size: 40),
+        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), size: 40),
         Container(
             height: 90,
-            child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),)),
+            child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),)),
       ],
     );
   }

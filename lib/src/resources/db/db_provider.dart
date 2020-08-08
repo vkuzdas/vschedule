@@ -61,10 +61,10 @@ class DBProvider {
 //    insertTestBatch();
 
     List<Map<String, dynamic>> tableInfo = await _db.rawQuery("PRAGMA table_info([$_TABLE])");
-    _log.info("Tables:  " + tableInfo.toString());
+    _log.fine("Tables:  " + tableInfo.toString());
 
     List<Map<String, dynamic>> select = await _db.rawQuery("SELECT * FROM ScheduleEvents");
-    _log.info("After insert:  " + select.toString());
+    _log.fine("After insert:  " + select.toString());
   }
 
 //  Future<List<ScheduleEvent>> getEventsByDay(String day) async {
@@ -131,7 +131,7 @@ class DBProvider {
   }
 
   void insertTestBatch() {
-    insertEvent(ScheduleEvent.fromStrings("Mon", "11:00", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
+    insertEvent(ScheduleEvent.fromStrings("Mon", "11:00", "12:30", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Thu", "09:15", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Fri", "09:15", "10:45", "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings("Tue", "07:30", "09:00", "4IT115 Software Engineering", "Lecture", "Vencovského aula", "A. Buchalcevová"));

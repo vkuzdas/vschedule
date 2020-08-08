@@ -2,9 +2,9 @@ import 'package:rxdart/rxdart.dart';
 
 class ScheduleBloc {
 
-  final _weekday = BehaviorSubject<int>(seedValue: 0);
+  final _selectedDay = BehaviorSubject<int>(seedValue: 0);
 
-  Stream<int> get weekday => _weekday.stream;
+  Stream<int> get selectedDay => _selectedDay.stream;
 
-  Function(int) get weekdaySink => _weekday.sink.add;
+  Function(int) get selectedDaySink => _selectedDay.sink.add;
 }

@@ -38,38 +38,38 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
 
   Widget buildSchedule() {
-
     return StreamBuilder(
-      stream: bloc.weekday,
-      builder: (streamContext, streamSnapshot) {
-        if (streamSnapshot.connectionState == ConnectionState.active) {
-
+      stream: bloc.selectedDay,
+      builder: (streamContext, selectedDay) {
+        if (selectedDay.connectionState == ConnectionState.active) {
+          int weekday = ((selectedDay.data as int) + DateTime.now().weekday) % 7; // selected -> weekday conversion
           return FutureBuilder(
-            future: repository.getEventsOnWeekday(streamSnapshot.data),
-            builder: (futureContext, futureSnapshot) {
-              if(futureSnapshot.connectionState == ConnectionState.done) {
-
-                List<ScheduleEvent> daySchedule = futureSnapshot.data;
+            future: repository.getEventsOnWeekday(weekday),
+            builder: (futureContext, dbStream) {
+              if(dbStream.connectionState == ConnectionState.done) {
+                List<ScheduleEvent> daySchedule = dbStream.data;
                 List<ScheduleEventWidget> dayWidgets = List<ScheduleEventWidget>();
                 if(daySchedule != null) {
-                  daySchedule.forEach((ev) => dayWidgets.add(ScheduleEventWidget(ev, ScheduleEventState.PAST)));
+                  daySchedule.forEach((ev) {
+                    dayWidgets.add(ScheduleEventWidget(ev, ev.getState(TimeOfDay.now(), selectedDay.data as int)));
+                  });
                 }
-                return Column(
-                  children: dayWidgets,
+                return SingleChildScrollView(
+                  child: Column(
+                    children: dayWidgets,
+                  )
                 );
-
               } else {
                 return CircularProgressIndicator();
               }
             },
           );
-
-        } else {
+        }
+        else {
           return CircularProgressIndicator();
         }
       },
     );
-
   }
 
   @override
@@ -132,7 +132,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             ),
           ),
           Container(height: deviceHeight * 0.02),
-          DatePicker(onChanged: bloc.weekdaySink,)
+          DatePicker(onChanged: bloc.selectedDaySink,)
         ],
       ),
     );

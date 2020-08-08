@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 
@@ -20,19 +21,20 @@ class ScheduleEventWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Color fontColor = ( _scheduleEventState == ScheduleEventState.PAST ? whiteFontFaded : whiteFont);
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
 
         /// LEFT: Time
         Expanded(
           flex: 2,
-          child:
-          Container(
-            child: Column(
-              children: <Widget>[
-                Container(height: 10,),
-                Text(_scheduleEvent.getFrom(),
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor),),
-              ],
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
+            child: Text(
+              _scheduleEvent.getFrom(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor
+              ),
             )
           )
         ),

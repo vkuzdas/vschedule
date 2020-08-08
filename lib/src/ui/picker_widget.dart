@@ -72,7 +72,7 @@ class DatePickerState extends State<DatePicker> {
             quarterTurns: 3,
             child: ListWheelScrollView.useDelegate(
               onSelectedItemChanged: (int) {
-                widget.onChanged(_NOW.add(Duration(days: int)).weekday); // pass selected into bloc sink
+                widget.onChanged(int); // pass selected into bloc sink
                 setState(() { /// Rebuild selectedWidget, possibly Month text
                   _selected = int;
                   _selectedMonth =
