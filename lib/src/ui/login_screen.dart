@@ -70,7 +70,7 @@ class LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("images/login_pixel2_960.jpg"),
+          image: AssetImage("images/login_pixel2_960_mirr.jpg"),
           fit: BoxFit.cover,
         ),
       ),

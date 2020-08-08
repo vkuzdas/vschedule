@@ -43,10 +43,12 @@ class VscheduleApp extends StatelessWidget {
     bool signedInPreviously = repo.isEmpty();
 
     return MaterialApp(
+
       title: 'vschedule',
       theme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       darkTheme: vscheduleDarkThemeData(),
+      debugShowCheckedModeBanner: false,
 
 
       // TODO: this boolean does not work

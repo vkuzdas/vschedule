@@ -38,7 +38,9 @@ flutter:
   assets:
       - images/login_pixel2.jpg
       - images/login_pixel2_960.jpg
+      - images/login_pixel2_960_mirr.jpg
       - images/schedule_pixel2_960.jpg
+      - images/schedule_pixel2_960_mirr.jpg
 
   fonts:
       - family: Poppins

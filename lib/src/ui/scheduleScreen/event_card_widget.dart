@@ -52,7 +52,7 @@ class EventCardWidget extends StatelessWidget {
 
         /// COURSE
                   Container( padding: EdgeInsets.all(5),alignment: Alignment.centerLeft,
-                      child: Text(_course, style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
+                      child: Text(_adjustText(_course, 40), style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
                   ),
 
         /// TEACHER
@@ -81,6 +81,13 @@ class EventCardWidget extends StatelessWidget {
         ),
       ]
     );
+  }
+
+  String _adjustText(String course, int cutOff) {
+    if(course.length > cutOff) {
+      return course.substring(0,cutOff) + " ...";
+    }
+    return course;
   }
 
 }

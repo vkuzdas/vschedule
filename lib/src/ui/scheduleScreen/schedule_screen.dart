@@ -79,7 +79,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
-    final double appBarHeight = deviceHeight * 0.27;
+    final double appBarHeight = deviceHeight * 0.2;
     final double bottomBarHeight = deviceHeight * 0.1;
     final double bodyHeight = deviceHeight - (appBarHeight + bottomBarHeight);
 
@@ -87,7 +87,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       /// Background
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage("images/schedule_pixel2_960.jpg"),
+            image: AssetImage("images/schedule_pixel2_960_mirr.jpg"),
             fit: BoxFit.cover
         ),
       ),
@@ -117,10 +117,10 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     _log.info("sched header");
 
     return PreferredSize(
-      preferredSize: Size.fromHeight(deviceHeight * 0.27),
+      preferredSize: Size.fromHeight(deviceHeight * 0.2),
       child: Column(
         children: <Widget>[
-          Container(height: (deviceHeight * 0.12)),
+          Container(height: (deviceHeight * 0.05)),
           Container(
             padding: EdgeInsets.only(left: deviceWidth * 0.05),
             height: (deviceHeight * 0.05),
