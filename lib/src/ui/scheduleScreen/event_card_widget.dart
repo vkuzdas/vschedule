@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vseschedule_03/src/ui/my_painter.dart';
 
 class EventCardWidget extends StatelessWidget {
 
@@ -8,13 +9,14 @@ class EventCardWidget extends StatelessWidget {
   final String _course;
   final String _teacher;
   final String _room;
+  final String _entry;
 
   //TODO: how will you differ between seminar and lecture
 
 
 
   EventCardWidget(this._color, this._height, this._width, this._course, this._teacher,
-      this._room);
+      this._room, this._entry);
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,14 @@ class EventCardWidget extends StatelessWidget {
 
     return Stack(
       overflow: Overflow.visible,
+      alignment: Alignment.bottomRight,
       children: <Widget>[
         /// Background
         Positioned(
-          top: 0.1,
-          right: 10,
+          bottom: 0.2,
+//          right: 0.001,
           height: _height,
-          width: _width,
+          width: _width + 10,
           child: Card(
             elevation: cardTheme.elevation,
             color: _color,
@@ -38,12 +41,11 @@ class EventCardWidget extends StatelessWidget {
 
         /// Foreground
         Positioned(
-          right: 0,
-          height: _height + 0.2,
-          width: _width,
+          height: _height + 0.5,
+          width: _width + 0.01,
           child: Card(
             elevation: cardTheme.elevation,
-            color: cardTheme.color,
+            color: (_entry.toLowerCase() == "lecture") ? cardTheme.color.withOpacity(0.9) : cardTheme.color,
             shape: cardTheme.shape,
             child: Padding(
               padding: const EdgeInsets.only(left: 5),

@@ -53,7 +53,7 @@ class ScheduleEventWidget extends StatelessWidget {
               Container(
                 height: 140,
                 width: 350,
-                child: EventCardWidget(colorFromString(_scheduleEvent.getCourse().substring(0,6)), 135, 250, _scheduleEvent.getCourse(), _scheduleEvent.getTeacher(), _scheduleEvent.getRoom()),
+                child: EventCardWidget(colorFromString(_scheduleEvent.getCourse().substring(0,6)), 135, 250, _scheduleEvent.getCourse(), _scheduleEvent.getTeacher(), _scheduleEvent.getRoom(), _scheduleEvent.getEntry()),
               ),
             ]
           )

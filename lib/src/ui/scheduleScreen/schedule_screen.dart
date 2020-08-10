@@ -7,6 +7,7 @@ import 'package:vseschedule_03/src/resources/repository.dart';
 
 import '../../blocs/schedule_bloc.dart';
 import '../../blocs/schedule_bloc_provider.dart';
+import '../../vschedule_app.dart';
 import '../picker_widget.dart';
 import 'event_widget.dart';
 
@@ -55,18 +56,16 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                   });
                 }
                 return SingleChildScrollView(
-                  child: Column(
-                    children: dayWidgets,
-                  )
+                  child: Column(children: dayWidgets)
                 );
               } else {
-                return CircularProgressIndicator();
+                return loading();
               }
             },
           );
         }
         else {
-          return CircularProgressIndicator();
+          return loading();
         }
       },
     );
@@ -86,6 +85,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return Container(
       /// Background
       decoration: BoxDecoration(
+
         image: DecorationImage(
             image: AssetImage("images/schedule_pixel2_960_mirr.jpg"),
             fit: BoxFit.cover
@@ -155,6 +155,15 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget loading() {
+    return Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 3.0,
+          valueColor: AlwaysStoppedAnimation<Color>(greenBackground),
+        )
     );
   }
 
