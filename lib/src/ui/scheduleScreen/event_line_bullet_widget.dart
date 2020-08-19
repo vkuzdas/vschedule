@@ -14,6 +14,7 @@ class EventLineBulletWidget extends StatelessWidget {
 
   // TODO: Variable name conflicts "StatelessWidget"
   final ScheduleEventState _state;
+  final double _iconSize = 35;
 
   EventLineBulletWidget(this._state);
 
@@ -33,9 +34,9 @@ class EventLineBulletWidget extends StatelessWidget {
   Column getPast(BuildContext context) {
     return Column(
       children: <Widget>[
-        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), size: 40),
+        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), size: _iconSize),
         Container(
-            height: 90,
+            height: 100,
             child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),)),
       ],
     );
@@ -45,7 +46,7 @@ class EventLineBulletWidget extends StatelessWidget {
   Column getCurrent(BuildContext context) {
     return Column(
       children: <Widget>[
-        Icon(Icons.radio_button_checked, color: Theme.of(context).colorScheme.secondary, size: 40),
+        Icon(Icons.radio_button_checked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
         Container(
             height: 100,
             child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary,)),
@@ -57,7 +58,7 @@ class EventLineBulletWidget extends StatelessWidget {
   Column getFuture(BuildContext context) {
     return Column(
       children: <Widget>[
-        Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.secondary, size: 40),
+        Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
         Container(
             height: 100,
             child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary,)),

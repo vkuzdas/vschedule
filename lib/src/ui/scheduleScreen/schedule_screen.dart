@@ -55,8 +55,16 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                     dayWidgets.add(ScheduleEventWidget(ev, ev.getState(TimeOfDay.now(), selectedDay.data as int)));
                   });
                 }
+
+                if(dayWidgets.isEmpty) {
+                  return Center(child: Text("Volníčko :-)"));
+                }
                 return SingleChildScrollView(
-                  child: Column(children: dayWidgets)
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      child: Column(children: dayWidgets),
+                    )
                 );
               } else {
                 return loading();
@@ -93,20 +101,21 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       ),
 
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        /// DatePickerWidget
-        //TODO: pass in bloc, stream dates into it
-        appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
-        body: Container(
-          height: bodyHeight,
-          color: Color(0xFF27292B),
-          child: buildSchedule(),
+          backgroundColor: Colors.transparent,
+          /// DatePickerWidget
+          appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
+
+          body: Container(
+            height: bodyHeight,
+            color: Color(0xFF27292B),
+            /// ScheduleBody
+            child: buildSchedule(),
 //          child: Column(
 //            children: buildSchedule()
 //          )
-        ),
-        /// Bottom navigation
-        bottomNavigationBar: scheduleFooter(deviceHeight)
+          ),
+          /// Bottom navigation
+          bottomNavigationBar: scheduleFooter(deviceHeight)
       ),
     );
   }
@@ -120,7 +129,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       preferredSize: Size.fromHeight(deviceHeight * 0.2),
       child: Column(
         children: <Widget>[
-          Container(height: (deviceHeight * 0.05)),
+          Container(height: (deviceHeight * 0.01)),
           Container(
             padding: EdgeInsets.only(left: deviceWidth * 0.05),
             height: (deviceHeight * 0.05),

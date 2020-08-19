@@ -23,40 +23,42 @@ class ScheduleEventWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-
         /// LEFT: Time
         Expanded(
-          flex: 2,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
-            child: Text(
-              _scheduleEvent.getFrom(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor
-              ),
+            flex: 2,
+            child: Container(
+                padding: EdgeInsets.only(top: 4),
+                child: Text(
+                  _scheduleEvent.getFrom(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor
+                  ),
+                )
             )
-          )
         ),
 
         /// MIDDLE: Line & bullet
         Expanded(
-          flex: 1,
-          child: EventLineBulletWidget(_scheduleEventState)
+            flex: 1,
+            child: EventLineBulletWidget(_scheduleEventState)
         ),
 
         /// RIGHT: Card
         Expanded(
-          flex: 5,
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 140,
-                width: 350,
-                child: EventCardWidget(colorFromString(_scheduleEvent.getCourse().substring(0,6)), 135, 250, _scheduleEvent.getCourse(), _scheduleEvent.getTeacher(), _scheduleEvent.getRoom(), _scheduleEvent.getEntry()),
-              ),
-            ]
-          )
+            flex: 5,
+            child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 140,
+                    width: 350,
+                    child: EventCardWidget(colorFromString(_scheduleEvent.getCourse().substring(0,6)),
+                        140, 250,
+                        _scheduleEvent.getCourse(), _scheduleEvent.getTeacher(),
+                        _scheduleEvent.getRoom(), _scheduleEvent.getEntry(), _scheduleEvent.getUntil()),
+                  ),
+                ]
+            )
         )
       ],
     );

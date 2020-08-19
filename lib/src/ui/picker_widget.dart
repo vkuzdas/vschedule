@@ -38,8 +38,7 @@ class DatePickerState extends State<DatePicker> {
   int _selected;
   String _selectedMonth;
   DateTime _NOW;
-  // TODO: Add some notifier to this so that [ScheduleBloc] knows what date should be built
-
+  FixedExtentScrollController _controller;
 
   @override
   void initState() {
@@ -47,6 +46,7 @@ class DatePickerState extends State<DatePicker> {
     _NOW = DateTime.now();
     _selected = 0;      /// today is 0th index
     _selectedMonth = getMonthTag(daysInFuture(_selected));
+    _controller = FixedExtentScrollController(initialItem: 0);
   }
 
   @override
@@ -81,7 +81,7 @@ class DatePickerState extends State<DatePicker> {
                 });
               },
               perspective: double.minPositive,
-              controller: FixedExtentScrollController(initialItem: 0),
+              controller: _controller,
               physics: SlowFixedExtentScrollPhysics(),
               itemExtent: childSize, // 7 days per width
               childDelegate: ListWheelChildBuilderDelegate(

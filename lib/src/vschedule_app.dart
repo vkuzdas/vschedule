@@ -10,6 +10,7 @@ import 'ui/login_screen.dart';
 
 // Should be moved to theme
 const Color blackBackground = Color(0xFF212325);
+const Color shadowBackground = Color(0xFF27292B);
 const Color greenBackground = Color(0xFF2C8F4E);
 const Color greenBackgroundFaded = Color(0x882C8F4E);
 const Color greenBackgroundVeryFaded = Color(0xFF508964);
@@ -65,7 +66,7 @@ class VscheduleApp extends StatelessWidget {
   /// Colors, Fonts, Buttons, ...
   ThemeData vscheduleDarkThemeData() {
     return ThemeData(
-
+      accentColor: whiteFontFaded,
       /// Text
       textTheme: TextTheme(
         headline5: // LOGO "vschedule" on Login Page
