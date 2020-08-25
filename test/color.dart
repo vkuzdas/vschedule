@@ -3,6 +3,24 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
 
+  test('stacking test', () {
+
+
+//    List<List<ScheduleEvent>> listifyByTime(List<ScheduleEvent> daySchedule) {
+//      List<List<ScheduleEvent>> listified = List<List<ScheduleEvent>>();
+//      daySchedule.forEach((element) {
+//
+//      });
+//    }
+//
+//    bool overlaps(List<ScheduleEvent> daySchedule) {
+//      daySchedule.forEach((element) {
+//        daySchedule.co
+//      });
+//      return false;
+//    }
+  });
+
   test('Success', ()  {
     String str = "4EK101";
     int hash = 0;

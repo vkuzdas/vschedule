@@ -7,4 +7,8 @@ class ScheduleBloc {
   Stream<int> get selectedDay => _selectedDay.stream;
 
   Function(int) get selectedDaySink => _selectedDay.sink.add;
+
+  dispose () {
+    _selectedDay.close();
+  }
 }

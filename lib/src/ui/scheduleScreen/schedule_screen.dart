@@ -20,6 +20,7 @@ class ScheduleScreen extends StatefulWidget {
 
 class ScheduleScreenState extends State<ScheduleScreen> {
 
+  static const String _BGRND_IMG = "images/schedule_pixel2_960_mirr.jpg";
   ScheduleBloc bloc;
   final Repository repository = Repository.getInstance();
   final _log = Logger('ScheduleScreen');
@@ -32,52 +33,10 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   void dispose() {
-//    bloc.dispose();
+    bloc.dispose();
     super.dispose();
   }
 
-
-
-  Widget buildSchedule() {
-    return StreamBuilder(
-      stream: bloc.selectedDay,
-      builder: (streamContext, selectedDay) {
-        if (selectedDay.connectionState == ConnectionState.active) {
-          int weekday = ((selectedDay.data as int) + DateTime.now().weekday) % 7; // selected -> weekday conversion
-          return FutureBuilder(
-            future: repository.getEventsOnWeekday(weekday),
-            builder: (futureContext, dbStream) {
-              if(dbStream.connectionState == ConnectionState.done) {
-                List<ScheduleEvent> daySchedule = dbStream.data;
-                List<ScheduleEventWidget> dayWidgets = List<ScheduleEventWidget>();
-                if(daySchedule != null) {
-                  daySchedule.forEach((ev) {
-                    dayWidgets.add(ScheduleEventWidget(ev, ev.getState(TimeOfDay.now(), selectedDay.data as int)));
-                  });
-                }
-
-                if(dayWidgets.isEmpty) {
-                  return Center(child: Text("Volníčko :-)"));
-                }
-                return SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 5, bottom: 5),
-                      child: Column(children: dayWidgets),
-                    )
-                );
-              } else {
-                return loading();
-              }
-            },
-          );
-        }
-        else {
-          return loading();
-        }
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +52,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return Container(
       /// Background
       decoration: BoxDecoration(
-
-        image: DecorationImage(
-            image: AssetImage("images/schedule_pixel2_960_mirr.jpg"),
-            fit: BoxFit.cover
-        ),
+        image: DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
       ),
 
       child: Scaffold(
@@ -106,17 +61,44 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
 
           body: Container(
+            width: deviceWidth,
             height: bodyHeight,
             color: Color(0xFF27292B),
             /// ScheduleBody
             child: buildSchedule(),
-//          child: Column(
-//            children: buildSchedule()
-//          )
           ),
           /// Bottom navigation
           bottomNavigationBar: scheduleFooter(deviceHeight)
       ),
+    );
+  }
+
+
+
+
+  Widget buildSchedule() {
+    return StreamBuilder(
+      stream: bloc.selectedDay,
+      builder: (streamContext, selectedDay) {
+        if (selectedDay.connectionState == ConnectionState.active) {
+          int weekday = ((selectedDay.data as int) + DateTime.now().weekday) % 7; // selected -> weekday conversion
+          return FutureBuilder(
+            future: repository.getEventsOnWeekday(weekday),
+            builder: (futureContext, dbStream) {
+              if(dbStream.connectionState == ConnectionState.done) {
+
+                return buildEventsOnDay(dbStream, selectedDay);
+
+              } else {
+                return loading();
+              }
+            },
+          );
+        }
+        else {
+          return loading();
+        }
+      },
     );
   }
 
@@ -174,6 +156,61 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           valueColor: AlwaysStoppedAnimation<Color>(greenBackground),
         )
     );
+  }
+
+  Widget buildEventsOnDay(
+      AsyncSnapshot<dynamic> dbStream,
+      AsyncSnapshot<dynamic> selectedDay
+    ) {
+
+    List<ScheduleEvent> daySchedule = dbStream.data;
+    if(daySchedule.isEmpty) {
+      return Center(child: Text("Volníčko :-)"));
+    }
+    else {
+      List<Widget> widgetsToDisplay = List<ScheduleEventWidget>();
+      Map<DateTime, List<ScheduleEvent>> normalized = _normalize(daySchedule);
+      List<DateTime> sortedKeys = normalized.keys.toList();
+      sortedKeys.sort();
+
+      sortedKeys.forEach((key) {
+        widgetsToDisplay.add(ScheduleEventWidget(normalized[key], normalized[key][0].getState(TimeOfDay.now(), selectedDay.data as int)));
+      });
+
+
+      return SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 5, bottom: 5),
+            child: Column(children: widgetsToDisplay),
+          )
+      );
+    }
+  }
+
+  /// Method which sets a structure to overlapping events
+  Map<DateTime, List<ScheduleEvent>> _normalize(List<ScheduleEvent> l) {
+    Map<DateTime, List<ScheduleEvent>> normalized = Map<DateTime, List<ScheduleEvent>>();
+
+    l.forEach((el) {
+      normalized.putIfAbsent(el.getDateTimeFrom(), () => []);
+      normalized.putIfAbsent(el.getDateTimeUntil(), () => []);
+    });
+
+    l.forEach((el) {
+      normalized.keys.forEach((key) {
+        if (el.getDateTimeFrom() == key) {
+          normalized[key].add(el);
+        }
+        if (el.getDateTimeFrom().isBefore(key) && el.getDateTimeUntil().isAfter(key)) {
+          normalized[key].add(el);
+        }
+      });
+    });
+
+    normalized.removeWhere((key, value) => normalized[key].isEmpty);
+
+    return normalized;
   }
 
 }

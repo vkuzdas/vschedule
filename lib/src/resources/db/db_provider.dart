@@ -141,6 +141,7 @@ class DBProvider {
     insertEvent(ScheduleEvent.fromStrings("Tue", "14:30", "16:00", "4IZ210 Information and Knowledge Processing", "Lecture", "NB D", "J. Rauch"));
     insertEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4IT218 Database Management Systems", "Seminar", "SB 202", "H. Palovská"));
     insertEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4ST204 Statistics for Informatics", "Seminar", "SB 104", "F. Habarta"));
+    insertEvent(ScheduleEvent.fromStrings("Wed", "09:15", "10:45", "4XY204 Statistics for Informatics", "Seminar", "SB 104", "F. Habarta"));
     insertEvent(ScheduleEvent.fromStrings("Wed", "12:45", "14:15", "1FU201 Accounting I.", "Seminar", "SB 234", "J. Janhubová"));
   }
 

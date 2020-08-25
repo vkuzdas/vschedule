@@ -2,20 +2,30 @@ import 'package:flutter/material.dart';
 
 class EventCardWidget extends StatelessWidget {
 
+  double _height;
+  double _width;
+  int _cutoff;
+
   final Color _color;
-  final double _height;
-  final double _width;
   final String _course;
   final String _teacher;
   final String _room;
   final String _entry;
   final String _until;
+  final bool _goesInStack;
 
-  EventCardWidget(this._color, this._height, this._width, this._course, this._teacher,
+  EventCardWidget(this._color, this._goesInStack, this._course, this._teacher,
       this._room, this._entry, this._until);
 
   @override
   Widget build(BuildContext context) {
+
+    if(_goesInStack) {
+      _height = 120; _width = 230; _cutoff = 10;
+    } else {
+      _height = 140; _width = 250; _cutoff = 40;
+    }
+
     CardTheme cardTheme = Theme.of(context).cardTheme;
 
     return Stack(
@@ -50,7 +60,7 @@ class EventCardWidget extends StatelessWidget {
 
                       /// COURSE
                       Container( padding: EdgeInsets.all(5),alignment: Alignment.centerLeft,
-                          child: Text(_adjustText(_course, 40), style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
+                          child: Text(_adjustText(_course, _cutoff), style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
                       ),
                       /// TEACHER
                       Row(

@@ -17,6 +17,8 @@ dependencies:
   rxdart: ^0.18.0
   google_fonts: ^0.3.10
   numberpicker: ^1.2.0
+  flutter_swiper: ^1.1.6
+
 
   flutter:
     sdk: flutter
