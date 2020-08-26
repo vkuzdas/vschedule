@@ -10,22 +10,21 @@ import 'event_widget.dart';
 ///   1) Event already happened
 ///   2) Event is currently happening
 ///   3) Event will happen
-class EventLineBulletWidget extends StatelessWidget {
-
+class LineBullet extends StatelessWidget {
   // TODO: Variable name conflicts "StatelessWidget"
-  final ScheduleEventState _state;
+  final EventState _state;
   final double _iconSize = 35;
 
-  EventLineBulletWidget(this._state);
+  LineBullet(this._state);
 
   @override
   Widget build(BuildContext context) {
     switch (_state) {
-      case ScheduleEventState.PAST:
+      case EventState.PAST:
         return getPast(context);
-      case ScheduleEventState.CURRENT:
+      case EventState.CURRENT:
         return getCurrent(context);
-      case ScheduleEventState.FUTURE:
+      case EventState.FUTURE:
         return getFuture(context);
     }
   }
@@ -60,8 +59,15 @@ class EventLineBulletWidget extends StatelessWidget {
       children: <Widget>[
         Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
         Container(
-            height: 100,
-            child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary,)),
+            height: 100, //13,28%
+            child: VerticalDivider(indent: 5,
+              endIndent: 5,
+              thickness: 1.5,
+              width: 1.5,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .secondary,)),
       ],
     );
   }

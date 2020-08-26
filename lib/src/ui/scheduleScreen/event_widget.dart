@@ -2,44 +2,71 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 
-import '../../vschedule_app.dart';
-import 'event_card_widget.dart';
-import 'event_line_bullet_widget.dart';
+import '../app_colors.dart';
+import 'ev_card.dart';
+import 'line_bullet.dart';
 
-enum ScheduleEventState { PAST, CURRENT, FUTURE }
-
+enum EventState { PAST, CURRENT, FUTURE }
 
 class ScheduleEventWidget extends StatefulWidget {
+  final _log = Logger('ScheduleEventWidget');
 
-  ScheduleEventState _state;
-  List<ScheduleEvent> _events;
+  EventState _state;
+  ListQueue<ScheduleEvent> _events;
 
-  ScheduleEventWidget(this._events, this._state);
+  ScheduleEventWidget(this._events, int selectedDay) {
+    this._state = _getState(_events.elementAt(0), selectedDay);
+  }
+
+  /// selectedDay =  0  -> datePicker selected TODAY
+  /// selectedDay = -1  -> datePicker selected YESTERDAY
+  /// selectedDay =  1  -> datePicker selected TOMORROW
+  /// selectedDay =  2  -> datePicker selected day after TOMORROW
+  EventState _getState(ScheduleEvent ev, int selectedDay) {
+    TimeOfDay now = TimeOfDay.now();
+    if (selectedDay < 0) {
+      return EventState.PAST;
+    } else if (selectedDay > 0) {
+      return EventState.FUTURE;
+    } else {
+      DateTime from = ev.getDateTimeFrom();
+      DateTime until = ev.getDateTimeUntil();
+      DateTime nowDT =
+          DateTime(from.year, from.month, from.day, now.hour, now.minute);
+      if (until.isBefore(nowDT)) {
+        return EventState.PAST;
+      } else if (from.isAfter(nowDT)) {
+        return EventState.FUTURE;
+      } else {
+        return EventState.CURRENT;
+      }
+    }
+  }
 
   @override
   _ScheduleEventWidgetState createState() => _ScheduleEventWidgetState();
-
 }
 
 class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
 
-  ListQueue<ScheduleEvent> cardsQModel;
-  ListQueue<Widget> cardsQView;
+  ListQueue<ScheduleEvent> models;
+  ListQueue<Widget> cards;
+  List<double> margins;
 
   @override
   void initState() {
     super.initState();
-    if(widget._events.length > 1) {
-      cardsQModel = ListQueue<ScheduleEvent>();
-      cardsQView = ListQueue<Widget>();
+    models = widget._events;
+    if (models.length > 1) {
+      margins = [];
       double multiplier = 0;
-      widget._events.forEach((event) {
-        event.margin = (multiplier++)*4;
-        cardsQModel.add(event);
+      models.forEach((event) {
+        margins.add((multiplier++) * 4);
       });
-      cardsQView = _fillViews();
+      cards = _fillViews();
     }
   }
 
@@ -52,162 +79,128 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
     }
   }
 
-  Widget buildStack() {
-    Color fontColor = ( widget._state == ScheduleEventState.PAST ? whiteFontFaded : whiteFont);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        /// LEFT: Time
-        Expanded(
-            flex: 2,
-            child: Container(
-                padding: EdgeInsets.only(top: 4),
-                child: Text(
-                  widget._events[0].getFrom(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor
-                  ),
-                )
-            )
-        ),
-
-        /// MIDDLE: Line & bullet
-        Expanded(
-            flex: 1,
-            child: EventLineBulletWidget(widget._state)
-        ),
-
-        /// RIGHT: Card
-        Expanded(
-            flex: 5,
-            child: Column(
-                children: <Widget>[
-                  Container(
-                    height: 140,
-                    width: 350,
-                    child: Stack(
-                        alignment: Alignment.center,
-                        children: cardsQView.toList()
-                    )
-                  ),
-                ]
-            )
-        )
-      ],
-    );
-  }
-
+  /// SINGLE EVENT
   Widget buildCard() {
-    Color fontColor = ( widget._state == ScheduleEventState.PAST ? whiteFontFaded : whiteFont);
+    ScheduleEvent ev = widget._events.elementAt(0);
+    Color fontColor =
+    (widget._state == EventState.PAST ? AppColors.whiteFontFaded : AppColors
+        .whiteFont);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+
         /// LEFT: Time
         Expanded(
             flex: 2,
             child: Container(
                 padding: EdgeInsets.only(top: 4),
                 child: Text(
-                  widget._events[0].getFrom(),
+                  ev.getFrom(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.w400, fontFamily: "Poppins", letterSpacing: 2.0, color: fontColor
-                  ),
-                )
-            )
-        ),
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Poppins",
+                      letterSpacing: 2.0,
+                      color: fontColor),
+                ))),
 
         /// MIDDLE: Line & bullet
-        Expanded(
-            flex: 1,
-            child: EventLineBulletWidget(widget._state)
-        ),
+        Expanded(flex: 1, child: LineBullet(widget._state)),
 
         /// RIGHT: Card
         Expanded(
             flex: 5,
-            child: Column(
-                children: <Widget>[
-                  Container(
-                    height: 140,
-                    width: 350,
-                    child: EventCardWidget(_colorFromString(widget._events[0].getCourse().substring(0,6)),
-                        false,
-                        widget._events[0].getCourse(), widget._events[0].getTeacher(),
-                        widget._events[0].getRoom(), widget._events[0].getEntry(), widget._events[0].getUntil()),
-                  ),
-                ]
-            )
-        )
+            child: Column(children: <Widget>[
+              Container(
+                height: 140, // 18,5977
+                width: 350, // 82,6446
+                child: EventCard(false, ev.getCourse(), ev.getTeacher(),
+                    ev.getRoom(), ev.getEntry(), ev.getUntil()),
+              ),
+            ]))
       ],
     );
   }
 
-  Color _colorFromString(String str) {
-//    String str = "4EK101";
-    int hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      hash = str.codeUnitAt(i) + ((hash << 5) - hash);
-    }
-    String colour = '#';
-    for (var i = 0; i < 3; i++) {
-      int value = (hash >> (i * 8)) & 0xFF;
-      if(value < 16) {
-        colour += '0';
-      }
-      colour += value.toRadixString(16);
-    }
-    return Color(int.parse(colour.substring(1, 7), radix: 16) + 0xFF000000);
+  /// EVENTS ARE STACKED
+  Widget buildStack() {
+    String from = widget._events.elementAt(0).getFrom();
+    Color fontColor =
+    (widget._state == EventState.PAST ? AppColors.whiteFontFaded : AppColors
+        .whiteFont);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+
+        /// LEFT: Time
+        Expanded(
+            flex: 2,
+            child: Container(
+                padding: EdgeInsets.only(top: 4),
+                child: Text(
+                  from,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Poppins",
+                      letterSpacing: 2.0,
+                      color: fontColor),
+                ))),
+
+        /// MIDDLE: Line & bullet
+        Expanded(flex: 1, child: LineBullet(widget._state)),
+
+        /// RIGHT: Card
+        Expanded(
+            flex: 5,
+            child: Column(children: <Widget>[
+              Container(
+                  height: 140,
+                  width: 350,
+                  child: Stack(
+                      alignment: Alignment.topLeft,
+                      children: cards.toList())),
+            ]))
+      ],
+    );
   }
+
+
 
   ListQueue<Widget> _fillViews() {
     ListQueue<Widget> queue = ListQueue<Widget>();
 
-    cardsQModel.forEach((model) {
-      EventCardWidget card = EventCardWidget(
-          _colorFromString(model.getCourse().substring(0,6)), true,
-          model.getCourse(), model.getTeacher(),
-          model.getRoom(), model.getEntry(), model.getUntil()
-      );
-      queue.add(
-        Positioned(
-          bottom: model.margin, right: model.margin,
-          child: Draggable(
-            onDragEnd: (drag) {
-              _sendBackward();
-            },
-            childWhenDragging: Container(),
-            feedback: Container(
-              width: 250,
-              height: 140,
-              child: card,
-            ),
-            child: Container(
-              width: 250,
-              height: 140,
-              child: card,
-            ),
+    for (var i = 0; i < models.length; i++) {
+      EventCard card = EventCard(true, models.elementAt(i).getCourse(),
+          models.elementAt(i).getTeacher(), models.elementAt(i).getRoom(),
+          models.elementAt(i).getEntry(), models.elementAt(i).getUntil());
+      queue.add(Positioned(
+        bottom: margins[i],
+        right: margins[i],
+        child: Draggable(
+          onDragEnd: (drag) {
+            _sendBackward();
+          },
+          childWhenDragging: Container(),
+          feedback: Container(
+            width: 250 /* 59,0318% */, height: 140, child: card,
           ),
-        )
-      );
-    });
+          child: Container(
+            width: 250, height: 140, child: card,
+          ),
+        ),
+      ));
+    }
     return queue;
   }
 
   void _sendBackward() {
     setState(() {
-      List<double> margins = cardsQModel.map((card) => card.margin).toList();
-
-      ScheduleEvent removed = cardsQModel.removeLast();
-      cardsQModel.addFirst(removed);
-
-      for (var i = 0; i < margins.length; i++) {
-        cardsQModel.elementAt(i).margin = margins[i];
-      }
-
-      cardsQView = _fillViews();
+      ScheduleEvent removed = models.removeLast();
+      models.addFirst(removed);
+      cards = _fillViews();
     });
   }
-
 }

@@ -6,20 +6,8 @@ import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
 import 'blocs/schedule_bloc_provider.dart';
+import 'ui/app_colors.dart';
 import 'ui/login_screen.dart';
-
-// Should be moved to theme
-const Color blackBackground = Color(0xFF212325);
-const Color shadowBackground = Color(0xFF27292B);
-const Color greenBackground = Color(0xFF2C8F4E);
-const Color greenBackgroundFaded = Color(0x882C8F4E);
-const Color greenBackgroundVeryFaded = Color(0xFF508964);
-const Color whiteFont = Color(0xFFB9B9B9);
-const Color whiteFontFaded = Color(0x55B9B9B9);
-const Color orange = Color(0xFFFBAF3F);
-const Color cyan = Color(0xFF27AAE0);
-const Color darkBlue = Color(0xFF3E5BA7);
-
 
 class VscheduleApp extends StatelessWidget {
 
@@ -66,31 +54,45 @@ class VscheduleApp extends StatelessWidget {
   /// Colors, Fonts, Buttons, ...
   ThemeData vscheduleDarkThemeData() {
     return ThemeData(
-      accentColor: whiteFontFaded,
+      accentColor: AppColors.whiteFontFaded,
+
       /// Text
       textTheme: TextTheme(
         headline5: // LOGO "vschedule" on Login Page
-        TextStyle(fontFamily: "Poppins", fontSize: 50.0, fontWeight: FontWeight.w100, letterSpacing: 1.5, color: greenBackground,
-            shadows: [
-              Shadow(offset: Offset(-0.3, -0.3), color: greenBackground),/*bottomLeft*/
-              Shadow(offset: Offset(0.3, -0.3), color: greenBackground),/*bottomRight*/
-              Shadow(offset: Offset(0.3, 0.3), color: greenBackground),/*topRight*/
-              Shadow(offset: Offset(-0.3, 0.3), color: greenBackground),/*topLeft*/
+            TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 50.0,
+                fontWeight: FontWeight.w100,
+                letterSpacing: 1.5,
+                color: AppColors.greenBackground,
+                shadows: [
+              Shadow(
+                  offset: Offset(-0.3, -0.3), color: AppColors.greenBackground),
+              /*bottomLeft*/
+              Shadow(
+                  offset: Offset(0.3, -0.3), color: AppColors.greenBackground),
+              /*bottomRight*/
+              Shadow(
+                  offset: Offset(0.3, 0.3), color: AppColors.greenBackground),
+              /*topRight*/
+              Shadow(
+                  offset: Offset(-0.3, 0.3),
+                  color: AppColors.greenBackground), /*topLeft*/
             ]),
         headline6: // Page Title, "Rozvrh" on ScheduleScreen
-        TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
-        bodyText2: TextStyle(fontSize: 15.0, color: whiteFont),
+            TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
+        bodyText2: TextStyle(fontSize: 15.0, color: AppColors.whiteFont),
       ),
       fontFamily: 'Quicksand',
 
       /// Colors
-      scaffoldBackgroundColor: blackBackground,
+      scaffoldBackgroundColor: AppColors.blackBackground1,
       colorScheme: ColorScheme.fromSwatch(
-        cardColor: blackBackground,
-        backgroundColor: blackBackground,
-        accentColor: greenBackground,
+        cardColor: AppColors.blackBackground1,
+        backgroundColor: AppColors.blackBackground1,
+        accentColor: AppColors.greenBackground,
         brightness: Brightness.dark,
-        errorColor: orange,
+        errorColor: AppColors.orange,
       ),
 
       /// Buttons
@@ -98,31 +100,33 @@ class VscheduleApp extends StatelessWidget {
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0)
         ),
-        buttonColor: greenBackground,
-        disabledColor: greenBackgroundVeryFaded,
+        buttonColor: AppColors.greenBackground,
+        disabledColor: AppColors.greenBackgroundVeryFaded,
       ),
 
       /// TextInputField
       inputDecorationTheme: InputDecorationTheme(
-          hintStyle: TextStyle(fontSize: 16, fontFamily: "Quicksand", color: whiteFontFaded),
+          hintStyle: TextStyle(fontSize: 16,
+              fontFamily: "Quicksand",
+              color: AppColors.whiteFontFaded),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: greenBackgroundFaded),
+            borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
           ),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greenBackground)
+              borderSide: BorderSide(color: AppColors.greenBackground)
           ),
-          fillColor: blackBackground
+          fillColor: AppColors.blackBackground1
       ),
 
       /// Card Widget
       cardTheme: CardTheme(
         elevation: 0.0,
-        color: blackBackground,
+        color: AppColors.blackBackground1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      cardColor: blackBackground,
+      cardColor: AppColors.blackBackground1,
     );
   }
 }

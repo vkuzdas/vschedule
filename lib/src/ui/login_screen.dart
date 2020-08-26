@@ -4,18 +4,7 @@ import 'package:logging/logging.dart';
 
 import '../blocs/login_bloc.dart';
 import '../blocs/login_bloc_provider.dart';
-
-
-
-const Color blackBackground = Color(0xFF212325);
-const Color greenBackground = Color(0xFF2C8F4E);
-const Color greenBackgroundFaded = Color(0x882C8F4E);
-const Color greenBackgroundVeryFaded = Color(0xFF508964);
-const Color whiteFont = Color(0xFFB9B9B9);
-const Color whiteFontFaded = Color(0x88B9B9B9);
-const Color orange = Color(0xFFFBAF3F);
-const Color cyan = Color(0xFF27AAE0);
-const Color darkBlue = Color(0xFF3E5BA7);
+import 'app_colors.dart';
 
 class LoginScreen extends StatefulWidget { // stateful since we will be showing progressIndicator and fade a button
   @override
@@ -45,6 +34,7 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
+    print("dimensions: ${deviceHeight}, ${deviceWidth}");
     bloc = LoginBlocProvider.of(context);
     bool notNull(Object o) => o != null;
 
@@ -100,12 +90,14 @@ class LoginScreenState extends State<LoginScreen> {
                 exceptionNotifier(bloc),
                 Container(height: deviceHeight * 0.05),
                 Container(
-                  height: 50,
-                  width: 200,
+//                  height: 50, //6,64% width: 200, //47,225%
+                  height: deviceHeight * 0.0664, width: deviceWidth * 0.47225,
                   child: StreamBuilder(
                       stream: bloc.loading,
                       builder: (context, snapshot) {
-                        return snapshot.data == false ? submitButton(bloc) : Container(/*EMPTY*/);
+                        return snapshot.data == false
+                            ? submitButton(bloc)
+                            : Container(/*EMPTY*/);
                       }
                   ),
                 ),
@@ -121,8 +113,8 @@ class LoginScreenState extends State<LoginScreen> {
   Widget progressIndicator({double height}) {
     _log.info("ProgressIndicator rebuilt");
     return LinearProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(greenBackground),
-      backgroundColor: blackBackground,
+      valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenBackground),
+      backgroundColor: AppColors.blackBackground1,
     );
   }
 
@@ -148,16 +140,18 @@ class LoginScreenState extends State<LoginScreen> {
           onChanged: bloc.sinkXname,
           style: TextStyle(
               fontSize: 15,
-              color: whiteFont
+              color: AppColors.whiteFont
           ),
           decoration: InputDecoration(
             hintText: "xname",
-            hintStyle: TextStyle(fontSize: 16, fontFamily: "Quicksand", color: whiteFontFaded),
+            hintStyle: TextStyle(fontSize: 16,
+                fontFamily: "Quicksand",
+                color: AppColors.whiteFontFaded),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greenBackgroundFaded),
+              borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greenBackground),
+              borderSide: BorderSide(color: AppColors.greenBackground),
             ),
           ),
         );
@@ -173,17 +167,19 @@ class LoginScreenState extends State<LoginScreen> {
           onChanged: bloc.sinkPassword,
           style: TextStyle(
             fontSize: 15,
-            color: whiteFont
+              color: AppColors.whiteFont
           ),
           obscureText: true,
           decoration: InputDecoration(
             hintText: "heslo",
-            hintStyle: TextStyle(fontSize: 16, fontFamily: "Quicksand", color: whiteFontFaded),
+            hintStyle: TextStyle(fontSize: 16,
+                fontFamily: "Quicksand",
+                color: AppColors.whiteFontFaded),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greenBackgroundFaded),
+              borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greenBackground),
+              borderSide: BorderSide(color: AppColors.greenBackground),
             ),
           ),
         );
@@ -225,24 +221,24 @@ class LoginScreenState extends State<LoginScreen> {
             child: Text(
               "Přihlásit se",
               style: TextStyle(
-                fontFamily: "Quicksand",
-                color: whiteFont,
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(2.0, 2.0),
-                    blurRadius: 5.0,
-                    color: Color.fromARGB(100, 0, 0, 0)
-                  )
-                ]
+                  fontFamily: "Quicksand",
+                  color: AppColors.whiteFont,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  shadows: <Shadow>[
+                    Shadow(
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 5.0,
+                        color: Color.fromARGB(100, 0, 0, 0)
+                    )
+                  ]
               ),
             ),
-            shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)
-            ),
-            color: greenBackground,
-            disabledColor: greenBackgroundVeryFaded,
+          shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0)
+          ),
+          color: AppColors.greenBackground,
+          disabledColor: AppColors.greenBackgroundVeryFaded,
           );
         }
     );

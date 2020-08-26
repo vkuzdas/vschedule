@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-class EventCardWidget extends StatelessWidget {
-
+class EventCard extends StatelessWidget {
   double _height;
   double _width;
   int _cutoff;
+  Color _color;
 
-  final Color _color;
   final String _course;
   final String _teacher;
   final String _room;
@@ -14,16 +13,38 @@ class EventCardWidget extends StatelessWidget {
   final String _until;
   final bool _goesInStack;
 
-  EventCardWidget(this._color, this._goesInStack, this._course, this._teacher,
-      this._room, this._entry, this._until);
+  EventCard(this._goesInStack, this._course, this._teacher, this._room,
+      this._entry, this._until) {
+    this._color = _colorFromString(_course.substring(0, 6));
+  }
+
+  Color _colorFromString(String str) {
+//    String str = "4EK101";
+    int hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = str.codeUnitAt(i) + ((hash << 5) - hash);
+    }
+    String colour = '#';
+    for (var i = 0; i < 3; i++) {
+      int value = (hash >> (i * 8)) & 0xFF;
+      if (value < 16) {
+        colour += '0';
+      }
+      colour += value.toRadixString(16);
+    }
+    return Color(int.parse(colour.substring(1, 7), radix: 16) + 0xFF000000);
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    if(_goesInStack) {
-      _height = 120; _width = 230; _cutoff = 10;
+    if (_goesInStack) {
+      _height = 120;
+      _width = 230;
+      _cutoff = 10; // 15,9387
     } else {
-      _height = 140; _width = 250; _cutoff = 40;
+      _height = 140;
+      _width = 250;
+      _cutoff = 40; // 18,5977
     }
 
     CardTheme cardTheme = Theme.of(context).cardTheme;

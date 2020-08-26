@@ -1,6 +1,3 @@
-import 'package:flutter/src/material/time.dart';
-import 'package:vseschedule_03/src/ui/scheduleScreen/event_widget.dart';
-
 enum Entry { LECTURE, SEMINAR }
 
 /// Model class of most important object which is a single event in a schedule
@@ -22,7 +19,6 @@ class ScheduleEvent {
   String    _course;  // Full name of the course, includes ident num.             Ex.: "4EK212 Quantitative Management"
   String    _room;    // Room number.                                             Ex.: "SB 109", "NB A", "Vencovského aula"
   String    _teacher; // Full name of the teacher.                                Ex.: "J. Sekničková"
-  double margin;
 
 
   ScheduleEvent.fromStrings(
@@ -162,26 +158,4 @@ class ScheduleEvent {
     return this._until;
   }
 
-  ScheduleEventState getState(TimeOfDay now, int selectedDay) {
-      if (selectedDay < 0) {
-        return ScheduleEventState.PAST;
-      }
-      else if (selectedDay > 0) {
-        return ScheduleEventState.FUTURE;
-      }
-      else {
-        DateTime from = this.getDateTimeFrom();
-        DateTime until = this.getDateTimeUntil();
-        DateTime nowDT = DateTime(from.year, from.month, from.day, now.hour, now.minute);
-        if (until.isBefore(nowDT)) {
-          return ScheduleEventState.PAST;
-        }
-        else if (from.isAfter(nowDT)) {
-          return ScheduleEventState.FUTURE;
-        }
-        else {
-          return ScheduleEventState.CURRENT;
-        }
-      }
-  }
 }

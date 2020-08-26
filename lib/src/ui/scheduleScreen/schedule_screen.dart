@@ -1,13 +1,15 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 import 'package:vseschedule_03/src/resources/repository.dart';
+import 'package:vseschedule_03/src/ui/app_colors.dart';
 
 import '../../blocs/schedule_bloc.dart';
 import '../../blocs/schedule_bloc_provider.dart';
-import '../../vschedule_app.dart';
 import '../picker_widget.dart';
 import 'event_widget.dart';
 
@@ -40,7 +42,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     bloc = ScheduleBlocProvider.of(context);
 
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -50,6 +51,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     final double bodyHeight = deviceHeight - (appBarHeight + bottomBarHeight);
 
     return Container(
+
       /// Background
       decoration: BoxDecoration(
         image: DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
@@ -57,23 +59,24 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
       child: Scaffold(
           backgroundColor: Colors.transparent,
+
           /// DatePickerWidget
           appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
 
           body: Container(
             width: deviceWidth,
             height: bodyHeight,
-            color: Color(0xFF27292B),
+            color: AppColors.blackBackground2,
+
             /// ScheduleBody
             child: buildSchedule(),
           ),
+
           /// Bottom navigation
           bottomNavigationBar: scheduleFooter(deviceHeight)
       ),
     );
   }
-
-
 
 
   Widget buildSchedule() {
@@ -86,9 +89,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             future: repository.getEventsOnWeekday(weekday),
             builder: (futureContext, dbStream) {
               if(dbStream.connectionState == ConnectionState.done) {
-
                 return buildEventsOnDay(dbStream, selectedDay);
-
               } else {
                 return loading();
               }
@@ -103,7 +104,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   PreferredSize scheduleHeader(ScheduleBloc bloc, double deviceHeight, double deviceWidth) {
-
     // GETS CALLED TWICE, WTF???
     _log.info("sched header");
 
@@ -153,28 +153,27 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return Center(
         child: CircularProgressIndicator(
           strokeWidth: 3.0,
-          valueColor: AlwaysStoppedAnimation<Color>(greenBackground),
-        )
+      valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenBackground),
+    )
     );
   }
 
-  Widget buildEventsOnDay(
-      AsyncSnapshot<dynamic> dbStream,
-      AsyncSnapshot<dynamic> selectedDay
-    ) {
-
+  Widget buildEventsOnDay(AsyncSnapshot<dynamic> dbStream,
+      AsyncSnapshot<dynamic> selectedDay) {
     List<ScheduleEvent> daySchedule = dbStream.data;
     if(daySchedule.isEmpty) {
       return Center(child: Text("Volníčko :-)"));
     }
     else {
       List<Widget> widgetsToDisplay = List<ScheduleEventWidget>();
-      Map<DateTime, List<ScheduleEvent>> normalized = _normalize(daySchedule);
+      Map<DateTime, ListQueue<ScheduleEvent>> normalized = _normalize(
+          daySchedule);
       List<DateTime> sortedKeys = normalized.keys.toList();
       sortedKeys.sort();
 
       sortedKeys.forEach((key) {
-        widgetsToDisplay.add(ScheduleEventWidget(normalized[key], normalized[key][0].getState(TimeOfDay.now(), selectedDay.data as int)));
+        widgetsToDisplay.add(
+            ScheduleEventWidget(normalized[key], selectedDay.data as int));
       });
 
 
@@ -189,12 +188,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   /// Method which sets a structure to overlapping events
-  Map<DateTime, List<ScheduleEvent>> _normalize(List<ScheduleEvent> l) {
-    Map<DateTime, List<ScheduleEvent>> normalized = Map<DateTime, List<ScheduleEvent>>();
+  Map<DateTime, ListQueue<ScheduleEvent>> _normalize(List<ScheduleEvent> l) {
+    Map<DateTime, ListQueue<ScheduleEvent>> normalized = Map<DateTime,
+        ListQueue<ScheduleEvent>>();
 
     l.forEach((el) {
-      normalized.putIfAbsent(el.getDateTimeFrom(), () => []);
-      normalized.putIfAbsent(el.getDateTimeUntil(), () => []);
+      normalized.putIfAbsent(el.getDateTimeFrom(), () => new ListQueue());
+      normalized.putIfAbsent(el.getDateTimeUntil(), () => new ListQueue());
     });
 
     l.forEach((el) {
