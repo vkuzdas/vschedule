@@ -15,10 +15,16 @@ class LineBullet extends StatelessWidget {
   final EventState _state;
   final double _iconSize = 35;
 
+  double devH;
+  double devW;
+
   LineBullet(this._state);
 
   @override
   Widget build(BuildContext context) {
+    devH = MediaQuery.of(context).size.height;
+    devW = MediaQuery.of(context).size.width;
+
     switch (_state) {
       case EventState.PAST:
         return getPast(context);
@@ -29,37 +35,49 @@ class LineBullet extends StatelessWidget {
     }
   }
 
-  // Opaque color, checked circle
   Column getPast(BuildContext context) {
     return Column(
       children: <Widget>[
         Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), size: _iconSize),
         Container(
-            height: 100,
-            child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),)),
+            height: devH * 0.16,
+            child: VerticalDivider(indent: 5,
+              endIndent: 5,
+              thickness: 1.5,
+              width: 1.5,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .secondary
+                  .withOpacity(0.5),)),
       ],
     );
   }
 
-  // Solid color, dotted circle
   Column getCurrent(BuildContext context) {
     return Column(
       children: <Widget>[
         Icon(Icons.radio_button_checked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
         Container(
-            height: 100,
-            child: VerticalDivider(indent: 5, endIndent: 5, thickness: 1.5, width: 1.5, color: Theme.of(context).colorScheme.secondary,)),
+            height: devH * 0.16,
+            child: VerticalDivider(indent: 5,
+              endIndent: 5,
+              thickness: 1.5,
+              width: 1.5,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .secondary,)),
       ],
     );
   }
 
-  // Solid color, unchecked circle
   Column getFuture(BuildContext context) {
     return Column(
       children: <Widget>[
         Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
         Container(
-            height: 100, //13,28%
+            height: devH * 0.16, //13,28%
             child: VerticalDivider(indent: 5,
               endIndent: 5,
               thickness: 1.5,

@@ -26,7 +26,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   ScheduleBloc bloc;
   final Repository repository = Repository.getInstance();
   final _log = Logger('ScheduleScreen');
-
+  Size _devSize;
 
   @override
   void initState() {
@@ -44,27 +44,30 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     bloc = ScheduleBlocProvider.of(context);
 
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double deviceHeight = MediaQuery.of(context).size.height;
-    final double appBarHeight = deviceHeight * 0.2;
-    final double bottomBarHeight = deviceHeight * 0.1;
-    final double bodyHeight = deviceHeight - (appBarHeight + bottomBarHeight);
+    _devSize = MediaQuery
+        .of(context)
+        .size;
+    final double appBarHeight = _devSize.height * 0.2;
+    final double bottomBarHeight = _devSize.height * 0.1;
+    final double bodyHeight = _devSize.height -
+        (appBarHeight + bottomBarHeight);
 
     return Container(
 
       /// Background
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
+        image: DecorationImage(
+            image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
       ),
 
       child: Scaffold(
           backgroundColor: Colors.transparent,
 
           /// DatePickerWidget
-          appBar: scheduleHeader(bloc, deviceHeight, deviceWidth),
+          appBar: scheduleHeader(bloc),
 
           body: Container(
-            width: deviceWidth,
+            width: _devSize.width,
             height: bodyHeight,
             color: AppColors.blackBackground2,
 
@@ -73,7 +76,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           ),
 
           /// Bottom navigation
-          bottomNavigationBar: scheduleFooter(deviceHeight)
+          bottomNavigationBar: scheduleFooter(_devSize.height)
       ),
     );
   }
@@ -103,26 +106,28 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  PreferredSize scheduleHeader(ScheduleBloc bloc, double deviceHeight, double deviceWidth) {
+  PreferredSize scheduleHeader(ScheduleBloc bloc) {
     // GETS CALLED TWICE, WTF???
     _log.info("sched header");
 
     return PreferredSize(
-      preferredSize: Size.fromHeight(deviceHeight * 0.2),
+      preferredSize: Size.fromHeight(_devSize.height * 0.2),
       child: Column(
         children: <Widget>[
-          Container(height: (deviceHeight * 0.01)),
+          Container(height: (_devSize.height * 0.01)),
           Container(
-            padding: EdgeInsets.only(left: deviceWidth * 0.05),
-            height: (deviceHeight * 0.05),
-            width: deviceWidth,
+            padding: EdgeInsets.only(left: _devSize.width * 0.05),
+            height: (_devSize.height * 0.05),
+            width: _devSize.width,
             child: Text(
               "Rozvrh",
               textAlign: TextAlign.left,
-              style: TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
+              style: TextStyle(letterSpacing: 1.0,
+                  fontFamily: "Poppins",
+                  fontSize: _devSize.height * 0.045),
             ),
           ),
-          Container(height: deviceHeight * 0.02),
+          Container(height: _devSize.height * 0.02),
           DatePicker(onChanged: bloc.selectedDaySink,)
         ],
       ),
@@ -173,7 +178,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
       sortedKeys.forEach((key) {
         widgetsToDisplay.add(
-            ScheduleEventWidget(normalized[key], selectedDay.data as int));
+            ScheduleEventWidget(
+                normalized[key], selectedDay.data as int, _devSize));
       });
 
 

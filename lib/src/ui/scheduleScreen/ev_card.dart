@@ -6,6 +6,9 @@ class EventCard extends StatelessWidget {
   int _cutoff;
   Color _color;
 
+  double devH;
+  double devW;
+
   final String _course;
   final String _teacher;
   final String _room;
@@ -37,13 +40,16 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    devH = MediaQuery.of(context).size.height;
+    devW = MediaQuery.of(context).size.width;
+
     if (_goesInStack) {
-      _height = 120;
-      _width = 230;
+      _height = devH * 0.2;
+      _width = devW * 0.55;
       _cutoff = 10; // 15,9387
     } else {
-      _height = 140;
-      _width = 250;
+      _height = devH * 0.22;
+      _width = devW * 0.6;
       _cutoff = 40; // 18,5977
     }
 
@@ -53,8 +59,10 @@ class EventCard extends StatelessWidget {
         overflow: Overflow.visible,
         alignment: Alignment.bottomRight,
         children: <Widget>[
+
           /// Background
           Positioned(
+
             bottom: 0.2,
 //          right: 0.001,
             height: _height,
@@ -83,6 +91,7 @@ class EventCard extends StatelessWidget {
                       Container( padding: EdgeInsets.all(5),alignment: Alignment.centerLeft,
                           child: Text(_adjustText(_course, _cutoff), style: TextStyle(fontWeight: FontWeight.w800, fontFamily: "Poppins"),)
                       ),
+
                       /// TEACHER
                       Row(
                         children: <Widget>[
@@ -94,6 +103,7 @@ class EventCard extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 3),
+
                       /// ROOM
                       Row(
                         children: <Widget>[
@@ -105,6 +115,7 @@ class EventCard extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 3),
+
                       /// UNTIL
                       Row(
                         children: <Widget>[

@@ -13,11 +13,11 @@ enum EventState { PAST, CURRENT, FUTURE }
 
 class ScheduleEventWidget extends StatefulWidget {
   final _log = Logger('ScheduleEventWidget');
-
+  Size _devSize;
   EventState _state;
   ListQueue<ScheduleEvent> _events;
 
-  ScheduleEventWidget(this._events, int selectedDay) {
+  ScheduleEventWidget(this._events, int selectedDay, this._devSize) {
     this._state = _getState(_events.elementAt(0), selectedDay);
   }
 
@@ -185,10 +185,10 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
           },
           childWhenDragging: Container(),
           feedback: Container(
-            width: 250 /* 59,0318% */, height: 140, child: card,
+            width: 200 /* 59,0318% */, height: 140, child: card,
           ),
           child: Container(
-            width: 250, height: 140, child: card,
+            width: 200, height: 140, child: card,
           ),
         ),
       ));
