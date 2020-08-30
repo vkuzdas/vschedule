@@ -33,12 +33,11 @@ class VscheduleApp extends StatelessWidget {
 
     return MaterialApp(
 
-      title: 'vschedule',
+      title: 'všerozvrh',
       theme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       darkTheme: vscheduleDarkThemeData(),
       debugShowCheckedModeBanner: false,
-
 
       // TODO: this boolean does not work
       initialRoute: signedInPreviously ? "/login" : "/schedule",

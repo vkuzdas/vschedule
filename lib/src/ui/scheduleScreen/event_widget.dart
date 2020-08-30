@@ -51,7 +51,6 @@ class ScheduleEventWidget extends StatefulWidget {
 }
 
 class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
-
   ListQueue<ScheduleEvent> models;
   ListQueue<Widget> cards;
   List<double> margins;
@@ -82,17 +81,20 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
   /// SINGLE EVENT
   Widget buildCard() {
     ScheduleEvent ev = widget._events.elementAt(0);
-    Color fontColor =
-    (widget._state == EventState.PAST ? AppColors.whiteFontFaded : AppColors
-        .whiteFont);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+    Color fontColor = (widget._state == EventState.PAST
+        ? AppColors.whiteFontFaded
+        : AppColors.whiteFont);
+
+    return Container(
+      height: widget._devSize.height * 0.22,
+      width: widget._devSize.width,
+      child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
 
         /// LEFT: Time
         Expanded(
             flex: 2,
-            child: Container(
+            child: Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Text(
                   ev.getFrom(),
@@ -103,7 +105,9 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
                       fontFamily: "Poppins",
                       letterSpacing: 2.0,
                       color: fontColor),
-                ))),
+                )
+            )
+        ),
 
         /// MIDDLE: Line & bullet
         Expanded(flex: 1, child: LineBullet(widget._state)),
@@ -111,24 +115,18 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
         /// RIGHT: Card
         Expanded(
             flex: 5,
-            child: Column(children: <Widget>[
-              Container(
-                height: 140, // 18,5977
-                width: 350, // 82,6446
-                child: EventCard(false, ev.getCourse(), ev.getTeacher(),
-                    ev.getRoom(), ev.getEntry(), ev.getUntil()),
-              ),
-            ]))
-      ],
+            child: EventCard(false, ev.getCourse(), ev.getTeacher(),
+                ev.getRoom(), ev.getEntry(), ev.getUntil()))
+      ]),
     );
   }
 
   /// EVENTS ARE STACKED
   Widget buildStack() {
     String from = widget._events.elementAt(0).getFrom();
-    Color fontColor =
-    (widget._state == EventState.PAST ? AppColors.whiteFontFaded : AppColors
-        .whiteFont);
+    Color fontColor = (widget._state == EventState.PAST
+        ? AppColors.whiteFontFaded
+        : AppColors.whiteFont);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -154,28 +152,26 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
 
         /// RIGHT: Card
         Expanded(
-            flex: 5,
-            child: Column(children: <Widget>[
-              Container(
-                  height: 140,
-                  width: 350,
-                  child: Stack(
-                      alignment: Alignment.topLeft,
-                      children: cards.toList())),
-            ]))
+          flex: 5,
+          child: Container(
+              height: widget._devSize.height * 0.22,
+              child: Stack(children: cards.toList())),
+        )
       ],
     );
   }
-
-
 
   ListQueue<Widget> _fillViews() {
     ListQueue<Widget> queue = ListQueue<Widget>();
 
     for (var i = 0; i < models.length; i++) {
-      EventCard card = EventCard(true, models.elementAt(i).getCourse(),
-          models.elementAt(i).getTeacher(), models.elementAt(i).getRoom(),
-          models.elementAt(i).getEntry(), models.elementAt(i).getUntil());
+      EventCard card = EventCard(
+          true,
+          models.elementAt(i).getCourse(),
+          models.elementAt(i).getTeacher(),
+          models.elementAt(i).getRoom(),
+          models.elementAt(i).getEntry(),
+          models.elementAt(i).getUntil());
       queue.add(Positioned(
         bottom: margins[i],
         right: margins[i],
@@ -184,12 +180,8 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
             _sendBackward();
           },
           childWhenDragging: Container(),
-          feedback: Container(
-            width: 200 /* 59,0318% */, height: 140, child: card,
-          ),
-          child: Container(
-            width: 200, height: 140, child: card,
-          ),
+          feedback: card,
+          child: card,
         ),
       ));
     }

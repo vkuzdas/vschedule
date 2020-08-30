@@ -120,7 +120,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget logo(BuildContext context) {
     return Text(
-      "vschedule",
+      "všerozvrh",
       textAlign: TextAlign.center,
       style: Theme.of(context).textTheme.headline,
     );

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app_colors.dart';
 import 'event_widget.dart';
-
-
 
 /// Middle widget of ScheduleScreen.
 ///
@@ -12,81 +11,66 @@ import 'event_widget.dart';
 ///   3) Event will happen
 class LineBullet extends StatelessWidget {
   // TODO: Variable name conflicts "StatelessWidget"
-  final EventState _state;
-  final double _iconSize = 35;
 
+  final EventState _state;
+
+  double _iconSize;
   double devH;
-  double devW;
+  double lineH;
+  double indent;
+  double iconOpacity;
+
+  Widget displayWidget;
+  IconData displayIcon;
 
   LineBullet(this._state);
 
   @override
   Widget build(BuildContext context) {
-    devH = MediaQuery.of(context).size.height;
-    devW = MediaQuery.of(context).size.width;
+    devH = MediaQuery
+        .of(context)
+        .size
+        .height;
+    lineH = devH * 0.16;
+    _iconSize = devH * 0.05;
+    indent = devH * 0.01;
 
-    switch (_state) {
-      case EventState.PAST:
-        return getPast(context);
-      case EventState.CURRENT:
-        return getCurrent(context);
-      case EventState.FUTURE:
-        return getFuture(context);
+    setAppearance();
+    return buildWidget();
+  }
+
+  void setAppearance() {
+    if (_state == EventState.PAST) {
+      displayIcon = Icons.check_circle_outline;
+      iconOpacity = 0.5;
+    } else if (_state == EventState.CURRENT) {
+      displayIcon = Icons.radio_button_checked;
+      iconOpacity = 1;
+    } else {
+      displayIcon = Icons.radio_button_unchecked;
+      iconOpacity = 1;
     }
   }
 
-  Column getPast(BuildContext context) {
+  Widget buildWidget() {
+    Color color = AppColors.greenBackground.withOpacity(iconOpacity);
     return Column(
       children: <Widget>[
-        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), size: _iconSize),
+        Icon(displayIcon,
+            color: color,
+            size: _iconSize
+        ),
         Container(
-            height: devH * 0.16,
-            child: VerticalDivider(indent: 5,
-              endIndent: 5,
+            height: lineH,
+            child: VerticalDivider(
+              indent: indent,
               thickness: 1.5,
               width: 1.5,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .secondary
-                  .withOpacity(0.5),)),
+              color: color,
+            )
+        ),
       ],
     );
   }
 
-  Column getCurrent(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Icon(Icons.radio_button_checked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
-        Container(
-            height: devH * 0.16,
-            child: VerticalDivider(indent: 5,
-              endIndent: 5,
-              thickness: 1.5,
-              width: 1.5,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .secondary,)),
-      ],
-    );
-  }
-
-  Column getFuture(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.secondary, size: _iconSize),
-        Container(
-            height: devH * 0.16, //13,28%
-            child: VerticalDivider(indent: 5,
-              endIndent: 5,
-              thickness: 1.5,
-              width: 1.5,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .secondary,)),
-      ],
-    );
-  }
 }
