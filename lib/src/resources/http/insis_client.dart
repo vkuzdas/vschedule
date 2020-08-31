@@ -153,6 +153,7 @@ class InsisClient {
 
   Future<bool> validateInsisCredentials(String usr, String pwd) async {
     Response res;
+    _headers.removeWhere((key, value) => key == "Cookie");
     _body.addAll({"credential_0": usr, "credential_1": pwd});
     try {
       res = await post(_INSIS_ROOT + "/auth/", headers: _headers, body: _body);

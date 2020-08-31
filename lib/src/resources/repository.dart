@@ -75,7 +75,6 @@ class Repository {
 
   /* Credentials: */
   saveCredentials() {
-    _log.info("Credentials saved: [" + _usr + ", " + _pwd + "]");
     if (_usr == null || _pwd == null) {
       throw Exception("Credentials were not set.");
     }
@@ -117,5 +116,7 @@ class Repository {
     return _dbProvider.isEmpty();
   }
 
-
+  void deleteSchedule() {
+    _dbProvider.deleteAllEntries();
+  }
 }

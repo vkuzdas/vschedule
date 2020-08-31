@@ -66,9 +66,10 @@ class LoginBloc {
       return false;
     }
 
-    if (await repository.dbIsEmpty()) {
-      repository.downloadSchedule();
-    }
+    /// download schedule with each sign in again
+    /// app there for works only with internet connection
+    repository.deleteSchedule();
+    repository.downloadSchedule();
 
     _loading.add(false);
     _exception.drain();
