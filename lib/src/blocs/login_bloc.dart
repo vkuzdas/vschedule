@@ -37,6 +37,7 @@ class LoginBloc {
     _loading.add(true);
     _exception.drain();
 
+    /// empty
     if (usr == "" || pwd == "") {
       _exception.add("Poskytni InSIS přihlašovací údaje.");
       _loading.add(false);
@@ -46,27 +47,28 @@ class LoginBloc {
     _log.info("login submited");
     repository.setCredentials(usr, pwd);
     repository.saveCredentials();
-//    List<ScheduleEvent> schedule;
 
-// TODO: solve "no-schedule" problem,
+    if (!await repository.checkNetwork()) {
+      _exception.add("Zkontroluj připojení k internetu.");
+      _loading.add(false);
+      return false;
+    }
 
-//    try {
-//      schedule = await repository.getDaySchedule(Day.Mon);
-//    } on SocketException catch(networkExc) {
-//      // no internet
-//      _exception.add("Zkontroluj připojení k internetu.");
-//      _loading.add(false);
-//      return false;
-//    } on ClientException catch(loginExc) {
-//      // wrong credentials
-//      _exception.add("Špatné přihlašovací údaje.");
-//      _loading.add(false);
-//      return false;
-//    } catch (e) {
-//      _exception.add("Něco se nepovedlo, zkus to za chvíli.");
-//      _loading.add(false);
-//      return false;
-//    }
+    if (!await repository.checkInsis()) {
+      _exception.add("Vypadá to, že Insis je offline.");
+      _loading.add(false);
+      return false;
+    }
+
+    if (!await repository.validateInsisCredentials(usr, pwd)) {
+      _exception.add("Špatné přihlašovací údaje.");
+      _loading.add(false);
+      return false;
+    }
+
+    if (await repository.dbIsEmpty()) {
+      repository.downloadSchedule();
+    }
 
     _loading.add(false);
     _exception.drain();

@@ -52,7 +52,6 @@ class DatePickerState extends State<DatePicker> {
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
-    final double deviceHeight = MediaQuery.of(context).size.height;
     final double childSize = deviceWidth/7;
 
     return Column(
@@ -148,13 +147,18 @@ class SlowFixedExtentScrollPhysics extends FixedExtentScrollPhysics {
       : super(parent: parent);
 
   @override
-  double get minFlingVelocity => 5.0;
+  double get minFlingVelocity => double.infinity;
 
   @override
-  double get maxFlingVelocity => 5.0;
+  double get maxFlingVelocity => double.infinity;
 
   @override
-  double get minFlingDistance => 5.0;
+  double get minFlingDistance => double.infinity;
+
+//  @override
+//  double carriedMomentum(double existingVelocity) {
+//
+//  }
 
   @override
   SlowFixedExtentScrollPhysics applyTo(ScrollPhysics ancestor) {

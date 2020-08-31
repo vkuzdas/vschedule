@@ -17,7 +17,6 @@ class LoginScreenState extends State<LoginScreen> {
   LoginBloc bloc;
   final _log = Logger('LoginScreen');
 
-
   @override
   void initState() {
     super.initState();
@@ -25,10 +24,9 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    bloc.dispose();
     super.dispose();
+    bloc.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +94,8 @@ class LoginScreenState extends State<LoginScreen> {
                       stream: bloc.loading,
                       builder: (context, snapshot) {
                         return snapshot.data == false
-                            ? submitButton(bloc)
-                            : Container(/*EMPTY*/);
+                                ? submitButton(bloc, context)
+                                : Container(/*EMPTY*/);
                       }
                   ),
                 ),
@@ -120,9 +118,12 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget logo(BuildContext context) {
     return Text(
-      "všerozvrh",
+      "vschedule",
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.headline,
+      style: Theme
+          .of(context)
+          .textTheme
+          .headline,
     );
   }
 
@@ -203,17 +204,17 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget submitButton(LoginBloc bloc) {
+  Widget submitButton(LoginBloc bloc, BuildContext buildContext) {
     _log.info("SubmitButton rebuilt");
     return StreamBuilder(
-      stream: bloc.pwdXnmCombined,
-      builder: (context, snapshot) {
-        return RaisedButton(
+        stream: bloc.pwdXnmCombined,
+        builder: (context, snapshot) {
+          return RaisedButton(
             onPressed: snapshot.hasData ? () async {
               bool switchScreen = await bloc.submit();
               if (switchScreen) {
                 Navigator.pushNamed(
-                    context,
+                    buildContext,
                     "/schedule"
                 );
               }

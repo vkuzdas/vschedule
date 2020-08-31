@@ -16,24 +16,23 @@ class VscheduleApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     /// App display properties
-    SystemChrome.setEnabledSystemUIOverlays([]);// disable upper bar
+    SystemChrome.setEnabledSystemUIOverlays([]); // disable upper bar
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
 
-
     /// Logging setup
-    Logger.root.level = Level.CONFIG;
+    Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
+      print(
+          '${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
     repo = Repository.getInstance();
     bool signedInPreviously = repo.isEmpty();
 
     return MaterialApp(
-
-      title: 'všerozvrh',
+      title: 'vschedule',
       theme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       darkTheme: vscheduleDarkThemeData(),

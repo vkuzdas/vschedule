@@ -51,56 +51,89 @@ class DBProvider {
     final path = join(dir.path, "schedule_events.db");
 
     // gets executed only on app installation
-    _db = await openDatabase(path, version: 1,
-        onCreate: (newDb, version) {
-          newDb.execute(_createTableString);
-        }
-    );
+    _db = await openDatabase(path, version: 1, onCreate: (newDb, version) {
+      newDb.execute(_createTableString);
+    });
 
 //    deleteAllEntries();
 //    insertTestBatch();
 
-    List<Map<String, dynamic>> tableInfo = await _db.rawQuery("PRAGMA table_info([$_TABLE])");
+    List<Map<String, dynamic>> tableInfo =
+        await _db.rawQuery("PRAGMA table_info([$_TABLE])");
     _log.fine("Tables:  " + tableInfo.toString());
 
-    List<Map<String, dynamic>> select = await _db.rawQuery("SELECT * FROM ScheduleEvents");
+    List<Map<String, dynamic>> select =
+        await _db.rawQuery("SELECT * FROM ScheduleEvents");
     _log.fine("After insert:  " + select.toString());
   }
 
-//  Future<List<ScheduleEvent>> getEventsByDay(String day) async {
-//    final result = await _db.query(
-//      _TABLE, columns: null, where: "day = ?", whereArgs: [day],
-//    );
-//    List<ScheduleEvent> schedule = [];
-//    result.forEach((json) {
-//      ScheduleEvent event = ScheduleEvent.fromStrings();
-//      schedule.add(event);
-//    });
-//    return schedule;
-//  }
+  Future<bool> isEmpty() async {
+    List<Map<String, dynamic>> select =
+        await _db.rawQuery("SELECT * FROM ScheduleEvents");
+    return select.isEmpty;
+  }
 
-//  Future<List<ScheduleEvent>> getSchedule() async {
-//    final result = await _db.rawQuery("SELECT * FROM $_TABLE");
-//    List<ScheduleEvent> schedule = [];
-//    result.forEach((json) {
-//      ScheduleEvent event = ScheduleEvent.fromDB(json);
-//      schedule.add(event);
-//    });
-//    return schedule;
-//  }
+  Future<List<ScheduleEvent>> getEventsByDay(String day) async {
+    final result = await _db.query(
+      _TABLE,
+      columns: null,
+      where: "day = ?",
+      whereArgs: [day],
+    );
+    List<ScheduleEvent> schedule = [];
+    result.forEach((json) {
+      ScheduleEvent event = ScheduleEvent.fromStrings(
+          json["day"].toString(),
+          json["from"],
+          json["until"],
+          json["course"],
+          json["entry"],
+          json["room"],
+          json["teacher"]);
+      schedule.add(event);
+    });
+    return schedule;
+  }
 
-  void insertEvent(ScheduleEvent event) {
-    _log.info("DB event insert: [" + event.getFrom() + ", "+event.getRoom() + ", " + event.getDayNumber().toString() + "]");
+  Future<List<ScheduleEvent>> getSchedule() async {
+    final result = await _db.rawQuery("SELECT * FROM $_TABLE");
+    List<ScheduleEvent> schedule = [];
+    result.forEach((json) {
+      ScheduleEvent event = ScheduleEvent.fromStrings(
+          json["day"],
+          json["from"],
+          json["until"],
+          json["course"],
+          json["entry"],
+          json["room"],
+          json["teacher"]);
+      schedule.add(event);
+    });
+    return schedule;
+  }
+
+  Future<void> insertEvent(ScheduleEvent event) async {
+    _log.info("DB event insert: [" +
+        event.getFrom() +
+        ", " +
+        event.getRoom() +
+        ", " +
+        event.getDayNumber().toString() +
+        "]");
     Map<String, dynamic> values = {
-      "day"     : event.getDayNumber(),
-      "[from]"  : event.getFrom(),     // FROM is a keyword
-      "until"   : event.getUntil(),
-      "course"  : event.getCourse(),
-      "entry"   : event.getEntry(),
-      "room"    : event.getRoom(),
-      "teacher" : event.getTeacher()
+      "day": event.getDayNumber(),
+      "[from]": event.getFrom(), // FROM is a keyword
+      "until": event.getUntil(),
+      "course": event.getCourse(),
+      "entry": event.getEntry(),
+      "room": event.getRoom(),
+      "teacher": event.getTeacher()
     };
     _db.insert(_TABLE, values);
+
+    List<Map<String, dynamic>> select =
+        await _db.rawQuery("SELECT * FROM ScheduleEvents");
+    _log.fine("After insert:  " + select.toString());
   }
 
   // since all methods are async, is there possibility of dirty read and stuff?

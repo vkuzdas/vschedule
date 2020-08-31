@@ -6,7 +6,8 @@ void main() {
 
   test('Success', () async {
     InsisClientProvider icp = InsisClientProvider.getInstance();
-    List<ScheduleEvent> schedule = await icp.getSchedule("kuzv06", "3BigElephants");
+    List<ScheduleEvent> schedule =
+        await icp.getSchedule("kuzv06", "3BigElephants");
     expect(schedule.length, 10);
   });
 
@@ -15,4 +16,10 @@ void main() {
     List<ScheduleEvent> schedule = await icp.getSchedule("abc", "efg");
   });
 
+  test('try conn', () async {
+    InsisClientProvider icp = InsisClientProvider.getInstance();
+    List<ScheduleEvent> schedule =
+        await icp.getSchedule("kuzv06", "3BigElephants");
+    expect(schedule.length, 13);
+  });
 }

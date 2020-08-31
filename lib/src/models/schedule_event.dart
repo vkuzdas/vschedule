@@ -1,4 +1,4 @@
-enum Entry { LECTURE, SEMINAR }
+enum Entry { LECTURE, SEMINAR, UNKNOWN }
 
 /// Model class of most important object which is a single event in a schedule
 ///
@@ -35,15 +35,20 @@ class ScheduleEvent {
   }
 
   Entry _parseEntry(String entry) {
+    if (entry == "Přednáška") {
+      return Entry.LECTURE;
+    }
+    if (entry == "Cvičení") {
+      return Entry.SEMINAR;
+    }
+
     entry = "Entry." + entry.toUpperCase();
     if (entry == Entry.LECTURE.toString()) {
       return Entry.LECTURE;
-    }
-    else if (entry == Entry.SEMINAR.toString()) {
+    } else if (entry == Entry.SEMINAR.toString()) {
       return Entry.SEMINAR;
-    }
-    else {
-      throw FormatException("Got unknown ENTRY on ScheduleEvent Construction.");
+    } else {
+      return Entry.UNKNOWN;
     }
   }
 
@@ -62,22 +67,43 @@ class ScheduleEvent {
       case "Thu" :
         dayInt = DateTime.thursday;
         break;
-      case "Fri" :
+      case "Fri":
         dayInt = DateTime.friday;
         break;
-      case "Sun" :
+      case "Sun":
         dayInt = DateTime.sunday;
         break;
-      case "Sat" :
+      case "Sat":
         dayInt = DateTime.saturday;
         break;
-      case "1" :
+      case "Po":
         dayInt = DateTime.monday;
         break;
-      case "2" :
+      case "Út":
         dayInt = DateTime.tuesday;
         break;
-      case "3" :
+      case "St":
+        dayInt = DateTime.wednesday;
+        break;
+      case "Čt":
+        dayInt = DateTime.thursday;
+        break;
+      case "Pá":
+        dayInt = DateTime.friday;
+        break;
+      case "So":
+        dayInt = DateTime.saturday;
+        break;
+      case "Ne":
+        dayInt = DateTime.sunday;
+        break;
+      case "1":
+        dayInt = DateTime.monday;
+        break;
+      case "2":
+        dayInt = DateTime.tuesday;
+        break;
+      case "3":
         dayInt = DateTime.wednesday;
         break;
       case "4" :

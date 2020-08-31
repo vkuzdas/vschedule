@@ -33,25 +33,32 @@ class Repository {
   }
 
   /* Resource management: */
-//  Future<List<ScheduleEvent>> getDaySchedule(String day) async {
-//    List<ScheduleEvent> todaySchedule = await _dbProvider.getEventsByDay(day);
-//    if (todaySchedule.length == 0) { // empty db
-//      _readCredentials();
-//      List<ScheduleEvent> wholeSchedule = await _apiProvider.getSchedule(_usr, _pwd);
-//      if (wholeSchedule == null) {
-//        throw Exception("ApiProvider failed.");
-//      } else {
-//        _saveScheduleToDB(wholeSchedule);
-//        todaySchedule = await _dbProvider.getEventsByDay(day);
-//      }
-//    }
-//    return todaySchedule;
-//  }
+  Future<List<ScheduleEvent>> getDaySchedule(String day) async {
+    List<ScheduleEvent> todaySchedule = await _dbProvider.getEventsByDay(day);
+    if (todaySchedule.length == 0) {
+      // empty db
+      _readCredentials();
+      List<ScheduleEvent> wholeSchedule =
+          await _apiProvider.getSchedule(_usr, _pwd);
+      if (wholeSchedule == null) {
+        throw Exception("ApiProvider failed.");
+      } else {
+        _saveScheduleToDB(wholeSchedule);
+        todaySchedule = await _dbProvider.getEventsByDay(day);
+      }
+    }
+    return todaySchedule;
+  }
+
+  downloadSchedule() async {
+    List<ScheduleEvent> wholeSchedule =
+        await _apiProvider.getSchedule(_usr, _pwd);
+    _saveScheduleToDB(wholeSchedule);
+  }
 
   Future<List<ScheduleEvent>> getEventsOnWeekday(int weekday) {
     return _dbProvider.getEventsOnWeekday(weekday);
   }
-
 
   /* Database */
   updateScheduleEvent(ScheduleEvent event) {
@@ -76,7 +83,6 @@ class Repository {
   }
 
   setCredentials(String usr, String pwd) {
-    _log.info("Credentials set: [" + usr + ", " + pwd + "]");
     this._usr = usr;
     this._pwd = pwd;
   }
@@ -94,4 +100,22 @@ class Repository {
   bool isEmpty() {
     return true;
   }
+
+  Future<bool> checkNetwork() {
+    return _apiProvider.checkNetwork();
+  }
+
+  Future<bool> checkInsis() {
+    return _apiProvider.checkInsis();
+  }
+
+  Future<bool> validateInsisCredentials(String usr, String pwd) {
+    return _apiProvider.validateInsisCredentials(usr, pwd);
+  }
+
+  Future<bool> dbIsEmpty() {
+    return _dbProvider.isEmpty();
+  }
+
+
 }

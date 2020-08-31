@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
@@ -5,15 +7,15 @@ import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
 
 class InsisClient {
-
   final _log = Logger("InsisClient");
 
+  String _TEST_URL = "https://www.seznam.cz/";
   String _INSIS_ROOT = "https://insis.vse.cz";
-  String _SCHEDULE_URI = "/auth/katalog/rozvrhy_view.pl?osobni=1&z=1&k=1&f=0&studijni_zpet=0&rozvrh=2935&rozvrh=2934&rozvrh=2875&format=list&zobraz=Zobrazit";
+  String _SCHEDULE_URI =
+      "/auth/katalog/rozvrhy_view.pl?rozvrh_student_obec=1?zobraz=1;format=list;lang=cz";
 
   Map<String, String> _headers;
   Map<String, String> _body;
-
 
   // private static instance
   static final InsisClient _instance = InsisClient._singletonConstructor();
@@ -28,12 +30,11 @@ class InsisClient {
     return _instance;
   }
 
-  
   _init() {
     _headers = {
       "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
       "Accept-Encoding": "gzip, deflate, br",
-      "Accept-Language": "en;q=0.9,en-US;q=0.8,cs-CZ;q=0.7",
+      "Accept-Language": "cs-CZ;q=0.9,en-US;q=0.8,en;q=0.7",
       "Connection": "keep-alive",
       "Host": "insis.vse.cz",
       "Sec-Fetch-Dest": "document",
@@ -61,7 +62,10 @@ class InsisClient {
 
     //SocketException or 403
     if(res.statusCode == 403) {
-      throw ClientException("Server responded with " + res.statusCode.toString() + ": " + res.reasonPhrase + ". Try entering valid credentials.");
+      _log.info(res.reasonPhrase + " " + res.statusCode.toString());
+      throw ClientException(
+          "Server responded with " + res.statusCode.toString() + ": " +
+              res.reasonPhrase + ". Try entering valid credentials.");
     }
 
     _log.info(res.reasonPhrase + " " + res.statusCode.toString());
@@ -91,13 +95,70 @@ class InsisClient {
 
 
   ScheduleEvent _parseSchedule(Element el) {
-    String day = el.nodes[0].nodes[0].nodes[0].text;
-    String from = el.nodes[1].nodes[0].nodes[0].text;
-    String until = el.nodes[2].nodes[0].nodes[0].text;
-    String course = el.nodes[3].nodes[0].nodes[0].nodes[0].text;
-    String entry = el.nodes[4].nodes[0].nodes[0].text;
-    String room = el.nodes[5].nodes[0].nodes[0].nodes[0].text;
-    String teacher = el.nodes[6].nodes[0].nodes[0].nodes[0].nodes[0].text;
-    return ScheduleEvent.fromStrings(day, from, until, course, entry, room, teacher);
+    String day,
+        from,
+        until,
+        course,
+        entry,
+        room,
+        teacher = "";
+
+    day = el.nodes[0].nodes[0].text;
+    from = el.nodes[1].nodes[0].text;
+    until = el.nodes[2].nodes[0].text;
+    course = el.nodes[3].nodes[0].text;
+    if (course == "Block class " || course == "Bloková akce ") {
+      // Block classes dont have entries and rooms -> would result in error
+      return ScheduleEvent.fromStrings(
+          day,
+          from,
+          until,
+          course,
+          "",
+          "",
+          "");
+    }
+    entry = el.nodes[4].nodes[0].text;
+    room = el.nodes[5].nodes[0].nodes[0].text;
+    teacher = el.nodes[6].nodes[0].nodes[0].nodes[0].text;
+    return ScheduleEvent.fromStrings(
+        day,
+        from,
+        until,
+        course,
+        entry,
+        room,
+        teacher);
+  }
+
+  Future<bool> checkNetwork() async {
+    Response res;
+    try {
+      res = await get(_TEST_URL);
+    } on SocketException {
+      return false;
+    }
+    return res.reasonPhrase == "OK";
+  }
+
+  Future<bool> checkInsis() async {
+    Response res;
+    try {
+      res = await get(_INSIS_ROOT);
+    } on SocketException {
+      return false;
+    }
+    return res.reasonPhrase == "OK";
+  }
+
+  Future<bool> validateInsisCredentials(String usr, String pwd) async {
+    Response res;
+    _body.addAll({"credential_0": usr, "credential_1": pwd});
+    try {
+      res = await post(_INSIS_ROOT + "/auth/", headers: _headers, body: _body);
+    } on SocketException {
+      return false;
+    }
+    return res.headers["set-cookie"] != null;
   }
 }

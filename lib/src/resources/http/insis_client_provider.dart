@@ -21,11 +21,21 @@ class InsisClientProvider {
     return _instance;
   }
 
-
   Future<List<ScheduleEvent>> getSchedule(String usr, String pwd) async {
     await _client.login(usr, pwd);
     List<ScheduleEvent> res = await _client.getSchedule();
     return res;
   }
 
+  Future<bool> checkNetwork() {
+    return _client.checkNetwork();
+  }
+
+  Future<bool> checkInsis() {
+    return _client.checkInsis();
+  }
+
+  Future<bool> validateInsisCredentials(String usr, String pwd) {
+    return _client.validateInsisCredentials(usr, pwd);
+  }
 }

@@ -16,9 +16,15 @@ class ScheduleEventWidget extends StatefulWidget {
   Size _devSize;
   EventState _state;
   ListQueue<ScheduleEvent> _events;
+  String _from;
 
-  ScheduleEventWidget(this._events, int selectedDay, this._devSize) {
+  ScheduleEventWidget(
+      this._from, this._events, int selectedDay, this._devSize) {
     this._state = _getState(_events.elementAt(0), selectedDay);
+    if (_from.split(":").elementAt(1) == "0") {
+      _from = _from + "0";
+      // DateTime.minute returns "0", not "00"
+    }
   }
 
   /// selectedDay =  0  -> datePicker selected TODAY
@@ -97,7 +103,7 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
             child: Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Text(
-                  ev.getFrom(),
+                  widget._from,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 18.0,
@@ -123,7 +129,7 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
 
   /// EVENTS ARE STACKED
   Widget buildStack() {
-    String from = widget._events.elementAt(0).getFrom();
+    String from = widget._from;
     Color fontColor = (widget._state == EventState.PAST
         ? AppColors.whiteFontFaded
         : AppColors.whiteFont);

@@ -18,6 +18,8 @@ class EventCard extends StatelessWidget {
   final String _until;
   final bool _goesInStack;
 
+  final double elevation = 3;
+
   EventCard(this._goesInStack, this._course, this._teacher, this._room,
       this._entry, this._until) {
     this._color = AppColors.colorFromString(_course.substring(0, 6));
@@ -31,11 +33,11 @@ class EventCard extends StatelessWidget {
     if (_goesInStack) {
       _height = devH * 0.20;
       _width = devW * 0.56;
-      _cutoff = 10; // 15,9387
+      _cutoff = 10;
     } else {
       _height = devH * 0.22;
       _width = devW * 0.6;
-      _cutoff = 40; // 18,5977
+      _cutoff = 30;
     }
 
     CardTheme cardTheme = Theme.of(context).cardTheme;
@@ -54,7 +56,7 @@ class EventCard extends StatelessWidget {
               height: _height,
               width: _width + 10,
               child: Card(
-                elevation: cardTheme.elevation,
+                elevation: elevation,
                 color: _color,
                 shape: cardTheme.shape,
               ),
@@ -65,15 +67,16 @@ class EventCard extends StatelessWidget {
               height: _height + 0.5,
               width: _width + 0.01,
               child: Card(
-                  elevation: cardTheme.elevation,
+                  elevation: elevation,
                   color: (_entry.toLowerCase() == "lecture")
-                      ? cardTheme.color.withOpacity(0.9)
+                      ? cardTheme.color.withOpacity(0.75)
                       : cardTheme.color,
                   shape: cardTheme.shape,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 5),
                     child: Column(
                       children: <Widget>[
+
                         /// COURSE
                         Container(
                             padding: EdgeInsets.all(5),

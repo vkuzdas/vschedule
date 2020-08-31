@@ -44,39 +44,38 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     bloc = ScheduleBlocProvider.of(context);
 
-    _devSize = MediaQuery
-        .of(context)
-        .size;
+    _devSize = MediaQuery.of(context).size;
     final double appBarHeight = _devSize.height * 0.2;
-    final double bottomBarHeight = _devSize.height * 0.1;
     final double bodyHeight = _devSize.height -
-        (appBarHeight + bottomBarHeight);
+        (appBarHeight + 0
+//            bottomBarHeight
+        );
 
     return Container(
-
       /// Background
       decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
+        image:
+            DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
       ),
 
       child: Scaffold(
-          backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
 
-          /// DatePickerWidget
-          appBar: scheduleHeader(bloc),
+        /// DatePickerWidget
+        appBar: scheduleHeader(bloc),
 
-          body: Container(
-            width: _devSize.width,
-            height: bodyHeight,
-            color: AppColors.blackBackground2,
+        body: Container(
+          width: _devSize.width,
+          height: bodyHeight,
+          color: AppColors.blackBackground2,
 
-            /// ScheduleBody
-            child: buildSchedule(),
-          ),
+          /// ScheduleBody
+          child: buildSchedule(),
+        ),
 
-          /// Bottom navigation
-          bottomNavigationBar: scheduleFooter(_devSize.height)
+        /// Bottom navigation
+//          bottomNavigationBar: scheduleFooter(_devSize.height)
+        /// TODO: finish-up About & Schedule pages
       ),
     );
   }
@@ -87,11 +86,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       stream: bloc.selectedDay,
       builder: (streamContext, selectedDay) {
         if (selectedDay.connectionState == ConnectionState.active) {
-          int weekday = ((selectedDay.data as int) + DateTime.now().weekday) % 7; // selected -> weekday conversion
+          int weekday = _selectedToWeekday(
+              selectedDay); // selected -> weekday conversion
+          _log.warning("weekday: ${weekday}");
           return FutureBuilder(
             future: repository.getEventsOnWeekday(weekday),
             builder: (futureContext, dbStream) {
-              if(dbStream.connectionState == ConnectionState.done) {
+              if (dbStream.connectionState == ConnectionState.done) {
                 return buildEventsOnDay(dbStream, selectedDay);
               } else {
                 return loading();
@@ -166,9 +167,17 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   Widget buildEventsOnDay(AsyncSnapshot<dynamic> dbStream,
       AsyncSnapshot<dynamic> selectedDay) {
     List<ScheduleEvent> daySchedule = dbStream.data;
-    if(daySchedule.isEmpty) {
+//    int selectedDayInt = selectedDay.data as int;
+
+    if (daySchedule.isEmpty
+        || DateTime.now().add(Duration(days: selectedDay.data as int)).isBefore(
+            DateTime(2020, 9, 21))) {
       return Center(child: Text("Volníčko :-)"));
     }
+//    if(DateTime.now().add(Duration(days: selectedDayInt)).isBefore(DateTime(2020, 9, 21))) {
+//      _log.warning("IS BEFORE TRIGGERED");
+//      return Center(child: Text("Volníčko :-)"));
+//    }
     else {
       List<Widget> widgetsToDisplay = List<ScheduleEventWidget>();
       Map<DateTime, ListQueue<ScheduleEvent>> normalized = _normalize(
@@ -179,6 +188,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       sortedKeys.forEach((key) {
         widgetsToDisplay.add(
             ScheduleEventWidget(
+                key.hour.toString() + ":" + key.minute.toString(),
                 normalized[key], selectedDay.data as int, _devSize));
       });
 
@@ -217,6 +227,16 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     normalized.removeWhere((key, value) => normalized[key].isEmpty);
 
     return normalized;
+  }
+
+  int _selectedToWeekday(AsyncSnapshot selectedDay) {
+    int w = ((selectedDay.data as int) + DateTime
+        .now()
+        .weekday) % 7;
+    if (w == 0) {
+      return 7;
+    }
+    return w;
   }
 
 }
