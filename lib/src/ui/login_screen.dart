@@ -32,7 +32,6 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
-    print("dimensions: ${deviceHeight}, ${deviceWidth}");
     bloc = LoginBlocProvider.of(context);
     bool notNull(Object o) => o != null;
 
@@ -57,33 +56,37 @@ class LoginScreenState extends State<LoginScreen> {
     // TODO --** Scale everything relatively to devices width and height **--
     return Container(
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("images/login_pixel2_960_mirr.jpg"),
-          fit: BoxFit.cover,
+          image: DecorationImage(
+            image: AssetImage("images/login_pixel2_960.jpg"),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Scaffold( // TODO: using Material messes up scrolling
-        backgroundColor: Colors.transparent,
-        body: Container(
-          margin: EdgeInsets.fromLTRB(deviceWidth * 0.1, 0.0, deviceWidth * 0.1, 0.0),
-          child: SingleChildScrollView(physics: BouncingScrollPhysics(), // no glow on the end
-              child: Column(
-              children: <Widget>[
-                Container(height: deviceHeight * 0.2),
-                logo(context),
-                Container(height: deviceHeight * 0.01),
-                Container(
-                  height: 3,
-                  child: StreamBuilder(
-                      stream: bloc.loading,
-                      builder: (context, snapshot) {
-                        return (snapshot.data == true ?  progressIndicator() :  Container(/*EMPTY*/));
-                      }
-                  ),
-                ),
-                Container(height: deviceHeight * 0.05),
-                xnameField(bloc),
-                passwordField(bloc),
+        child: Scaffold(
+          // TODO: using Material messes up scrolling
+          backgroundColor: Colors.transparent,
+          body: Container(
+            margin: EdgeInsets.fromLTRB(
+                deviceWidth * 0.1, 0.0, deviceWidth * 0.1, 0.0),
+            child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(), // no glow on the end
+                child: Column(
+                  children: <Widget>[
+                    Container(height: deviceHeight * 0.2),
+                    logo(context),
+                    Container(height: deviceHeight * 0.01),
+                    Container(
+                      height: 3,
+                      child: StreamBuilder(
+                          stream: bloc.loading,
+                          builder: (context, snapshot) {
+                            return (snapshot.data == true
+                                ? progressIndicator()
+                                : Container(/*EMPTY*/));
+                          }),
+                    ),
+                    Container(height: deviceHeight * 0.05),
+                    xnameField(bloc),
+                    passwordField(bloc),
                 Container(height: deviceHeight * 0.05),
                 exceptionNotifier(bloc),
                 Container(height: deviceHeight * 0.05),

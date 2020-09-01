@@ -7,27 +7,23 @@ environment:
   sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
-
-  path: any
-  path_provider: ^1.6.5
-  flutter_secure_storage: ^3.3.1+1
   logging: 0.11.4
+  #DATABASE
+  path_provider: ^1.6.5
+  sqflite: any
+  #CREDENTIAL STORE
+  flutter_secure_storage: ^3.3.1+1
+  #WEB
   http: any
   html: any
+
+  #BLOCS
   rxdart: ^0.18.0
-  google_fonts: ^0.3.10
-  numberpicker: ^1.2.0
-  flutter_swiper: ^1.1.6
 
 
   flutter:
     sdk: flutter
-  sqflite: any
 
-
-
-
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
@@ -37,18 +33,18 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
-  assets:
-      - images/login_pixel2.jpg
-      - images/login_pixel2_960.jpg
-      - images/login_pixel2_960_mirr.jpg
-      - images/schedule_pixel2_960.jpg
-      - images/schedule_pixel2_960_mirr.jpg
 
+  #IMAGES
+  assets:
+    - images/login_pixel2_960.jpg
+    - images/schedule_pixel2_960.jpg
+
+  #FONTS
   fonts:
-      - family: Poppins
-        fonts:
-          - asset: fonts/poppins/Poppins-Thin.ttf
-            weight: 100
+    - family: Poppins
+      fonts:
+        - asset: fonts/poppins/Poppins-Thin.ttf
+          weight: 100
           - asset: fonts/poppins/Poppins-ExtraLight.ttf
             weight: 200
           - asset: fonts/poppins/Poppins-Light.ttf

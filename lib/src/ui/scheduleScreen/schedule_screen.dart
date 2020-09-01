@@ -22,7 +22,7 @@ class ScheduleScreen extends StatefulWidget {
 
 class ScheduleScreenState extends State<ScheduleScreen> {
 
-  static const String _BGRND_IMG = "images/schedule_pixel2_960_mirr.jpg";
+  static const String _BGRND_IMG = "images/schedule_pixel2_960.jpg";
   ScheduleBloc bloc;
   final Repository repository = Repository.getInstance();
   final _log = Logger('ScheduleScreen');
