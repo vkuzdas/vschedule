@@ -47,7 +47,7 @@ class LoginBloc {
 
     try {
       list = await api.downloadSchedule(usr, pwd);
-    } on Exception {
+    } on Exception catch (e) {
       _exception.add("Login se nepovedl");
       _loading.add(false);
       return false;
