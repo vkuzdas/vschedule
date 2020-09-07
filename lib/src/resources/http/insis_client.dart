@@ -57,6 +57,8 @@ class InsisClient {
     String uisAuthCookie = await _getAuthCookie(usr, pwd);
     _headers.addAll({"Cookie": uisAuthCookie});
     Future<List<ScheduleEvent>> list = getSchedule();
+    // remove cookie for possible reconnect
+    _headers.removeWhere((key, value) => key == "Cookie");
     return list;
   }
 
