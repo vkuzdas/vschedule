@@ -41,7 +41,7 @@ void main() {
       "auth_id_hidden": "0",
       "auth_2fa_type": "no",
       "credential_0": "kuzv06",
-      "credential_1": "3BigElephants",
+      "credential_1": "",
       "credential_k": "",
       "credential_2": "86400"
     };
