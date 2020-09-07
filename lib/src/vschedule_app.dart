@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:vseschedule_03/src/resources/repository.dart';
 import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
@@ -11,7 +10,6 @@ import 'ui/login_screen.dart';
 
 class VscheduleApp extends StatelessWidget {
 
-  Repository repo;
 
   Widget build(BuildContext context) {
 
@@ -28,8 +26,7 @@ class VscheduleApp extends StatelessWidget {
           '${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
-    repo = Repository.getInstance();
-    bool signedInPreviously = repo.isEmpty();
+    bool signedInPreviously = true;
 
     return MaterialApp(
       title: 'vschedule',
@@ -37,9 +34,7 @@ class VscheduleApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       darkTheme: vscheduleDarkThemeData(),
       debugShowCheckedModeBanner: false,
-
-      // TODO: this boolean does not work
-      initialRoute: signedInPreviously ? "/login" : "/schedule",
+      initialRoute: "/login",
       routes: {
         "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
         "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen())

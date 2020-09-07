@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:logging/logging.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
-import 'package:vseschedule_03/src/resources/repository.dart';
+import 'package:vseschedule_03/src/resources/db/db_provider.dart';
 import 'package:vseschedule_03/src/ui/app_colors.dart';
 
 import '../../blocs/schedule_bloc.dart';
@@ -24,7 +24,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   static const String _BGRND_IMG = "images/schedule_pixel2_960.jpg";
   ScheduleBloc bloc;
-  final Repository repository = Repository.getInstance();
+  final DBProvider db = DBProvider.getInstance();
   final _log = Logger('ScheduleScreen');
   Size _devSize;
 
@@ -90,7 +90,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
               selectedDay); // selected -> weekday conversion
           _log.warning("weekday: ${weekday}");
           return FutureBuilder(
-            future: repository.getEventsOnWeekday(weekday),
+            future: db.getEventsOnWeekday(weekday),
             builder: (futureContext, dbStream) {
               if (dbStream.connectionState == ConnectionState.done) {
                 return buildEventsOnDay(dbStream, selectedDay);

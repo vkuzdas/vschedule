@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
@@ -9,7 +7,6 @@ import 'package:vseschedule_03/src/models/schedule_event.dart';
 class InsisClient {
   final _log = Logger("InsisClient");
 
-  String _TEST_URL = "https://www.seznam.cz/";
   String _INSIS_ROOT = "https://insis.vse.cz";
   String _SCHEDULE_URI =
       "/auth/katalog/rozvrhy_view.pl?rozvrh_student_obec=1?zobraz=1;format=list;lang=cz";
@@ -56,43 +53,42 @@ class InsisClient {
     };
   }
 
-  void login(String user, String password) async {
+  Future<List<ScheduleEvent>> downloadSchedule(String usr, String pwd) async {
+    String uisAuthCookie = await _getAuthCookie(usr, pwd);
+    _headers.addAll({"Cookie": uisAuthCookie});
+    Future<List<ScheduleEvent>> list = getSchedule();
+    return list;
+  }
+
+  Future<String> _getAuthCookie(String user, String password) async {
     _body.addAll({"credential_0": user, "credential_1": password});
-    Response res = await post(_INSIS_ROOT + "/auth/", headers: _headers, body: _body);
-
+    Response res =
+        await post(_INSIS_ROOT + "/auth/", headers: _headers, body: _body);
     //SocketException or 403
-    if(res.statusCode == 403) {
+    if (res.statusCode == 403) {
       _log.info(res.reasonPhrase + " " + res.statusCode.toString());
-      throw ClientException(
-          "Server responded with " + res.statusCode.toString() + ": " +
-              res.reasonPhrase + ". Try entering valid credentials.");
+      throw ClientException("Server responded with " +
+          res.statusCode.toString() +
+          ": " +
+          res.reasonPhrase +
+          ". Try entering valid credentials.");
     }
-
     _log.info(res.reasonPhrase + " " + res.statusCode.toString());
     String uisAuth = res.headers["set-cookie"].split(';')[0];
-
-    _headers.addAll({"Cookie": uisAuth});
+    return uisAuth;
   }
 
   Future<List<ScheduleEvent>> getSchedule() async {
     Response res = await get(_INSIS_ROOT + _SCHEDULE_URI, headers: _headers);
-
     _log.info(res.reasonPhrase + " " + res.statusCode.toString());
-
     Document dom = parse(res.body);
     List<Element> scheduleElement = dom.querySelectorAll('#tmtab_1 > tbody > tr');
     List<ScheduleEvent> schedule = [];
     scheduleElement.forEach((el) => {
       schedule.add(_parseSchedule(el))
     });
-
     return schedule;
   }
-
-  logout() async{
-
-  }
-
 
   ScheduleEvent _parseSchedule(Element el) {
     String day,
@@ -102,7 +98,6 @@ class InsisClient {
         entry,
         room,
         teacher = "";
-
     day = el.nodes[0].nodes[0].text;
     from = el.nodes[1].nodes[0].text;
     until = el.nodes[2].nodes[0].text;
@@ -129,37 +124,5 @@ class InsisClient {
         entry,
         room,
         teacher);
-  }
-
-  Future<bool> checkNetwork() async {
-    Response res;
-    try {
-      res = await get(_TEST_URL);
-    } on SocketException {
-      return false;
-    }
-    return res.reasonPhrase == "OK";
-  }
-
-  Future<bool> checkInsis() async {
-    Response res;
-    try {
-      res = await get(_INSIS_ROOT);
-    } on SocketException {
-      return false;
-    }
-    return res.reasonPhrase == "OK";
-  }
-
-  Future<bool> validateInsisCredentials(String usr, String pwd) async {
-    Response res;
-    _headers.removeWhere((key, value) => key == "Cookie");
-    _body.addAll({"credential_0": usr, "credential_1": pwd});
-    try {
-      res = await post(_INSIS_ROOT + "/auth/", headers: _headers, body: _body);
-    } on SocketException {
-      return false;
-    }
-    return res.headers["set-cookie"] != null;
   }
 }

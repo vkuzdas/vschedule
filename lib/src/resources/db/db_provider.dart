@@ -131,50 +131,45 @@ class DBProvider {
     };
     _db.insert(_TABLE, values);
 
-    List<Map<String, dynamic>> select =
-        await _db.rawQuery("SELECT * FROM ScheduleEvents");
-    _log.fine("After insert:  " + select.toString());
+//    List<Map<String, dynamic>> select =
+//        await _db.rawQuery("SELECT * FROM ScheduleEvents");
+//    _log.fine("After insert:  " + select.toString());
   }
 
-  // since all methods are async, is there possibility of dirty read and stuff?
-  void updateEventPriority(ScheduleEvent updateEvent, int priority) {
-    _db.update(_TABLE,
-        {'priority': priority},
-        where: "day = ?, until = ?, room = ?",
-        whereArgs: [updateEvent.getDayNumber(), updateEvent.getFrom(), updateEvent.getRoom()]);
-  }
-
+  /// Used to build schedule on daySelect in ScheduleScreen class
   Future<List<ScheduleEvent>> getEventsOnWeekday(int weekday) async {
     List<ScheduleEvent> schedule = new List<ScheduleEvent>();
     List<Map<String, dynamic>> result = await _db.query("ScheduleEvents", columns: null, where: "day = ?", whereArgs: [weekday],);
     result.forEach((map) {
       schedule.add(ScheduleEvent.fromStrings(
-          map["day"].toString(), map["from"], map["until"],
-          map["course"], map["entry"], map["room"],
-          map["teacher"])
-      );
+          map["day"].toString(),
+          map["from"],
+          map["until"],
+          map["course"],
+          map["entry"],
+          map["room"],
+          map["teacher"]));
     });
     return schedule;
   }
 
-  _deleteEvent(ScheduleEvent event) async {
-    return await _db.delete("ScheduleEvents",
-        where: "day = ?, until = ?, room = ?",
-        whereArgs: [event.getDayNumber(), event.getFrom(), event.getRoom()]);
+  void saveSchedule(List<ScheduleEvent> list) {
+    list.forEach((event) async {
+      await insertEvent(event);
+    });
+    _log.info("Schedule saved.");
   }
 
-  void insertTestBatch() {
-    insertEvent(ScheduleEvent.fromStrings(
-        "Mon",
-        "11:00",
-        "12:30",
-        "4EK212 Quantitative Management",
-        "Lecture",
-        "NB A",
-        "J. Sekničková"));
-    insertEvent(ScheduleEvent.fromStrings(
-        "Thu",
-        "09:15",
+  /// All entries are deleted on each login
+  Future<int> deleteAllEntries() {
+    Future<int> deletedRowCount = _db.delete(_TABLE);
+    return deletedRowCount;
+  }
+
+  void _insertTestBatch() {
+    insertEvent(ScheduleEvent.fromStrings("Mon", "11:00", "12:30",
+        "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
+    insertEvent(ScheduleEvent.fromStrings("Thu", "09:15",
         "10:45",
         "4EK212 Quantitative Management",
         "Lecture",
@@ -270,7 +265,5 @@ class DBProvider {
         "J. Janhubová"));
   }
 
-  void deleteAllEntries() {
-    Future<int> deletedRowCount = _db.delete(_TABLE);
-  }
+
 }
