@@ -10,7 +10,7 @@ void main() {
     InsisClient ic = InsisClient.getInstance();
     List<ScheduleEvent> list;
     try {
-      list = await ic.downloadSchedule("kuzv06", "3BigElephants");
+      list = await ic.downloadSchedule("", "");
     } on Exception {
       print("fail");
     }
