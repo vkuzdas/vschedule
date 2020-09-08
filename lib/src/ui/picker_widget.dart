@@ -69,26 +69,38 @@ class DatePickerState extends State<DatePicker> {
           height: childSize,
           child: RotatedBox(
             quarterTurns: 3,
-            child: ListWheelScrollView.useDelegate(
-              onSelectedItemChanged: (int) {
-                widget.onChanged(int); // pass selected into bloc sink
-                setState(() { /// Rebuild selectedWidget, possibly Month text
-                  _selected = int;
-                  _selectedMonth =
-                  ( getMonthTag(daysInFuture(int)) == _selectedMonth ) ?
-                  _selectedMonth : getMonthTag(daysInFuture(int));
-                });
+            child: GestureDetector(
+              onTapUp: (t) {
+                if (!(t.globalPosition.dx >= 3 / 7 * deviceWidth &&
+                    t.globalPosition.dx <= 4 / 7 * deviceWidth)) {
+                  int tapIndex = getTapIndex(t, _selected, deviceWidth);
+                  _controller.animateToItem(tapIndex,
+                      duration: Duration(milliseconds: 250),
+                      curve: Curves.linear);
+                }
               },
-              perspective: double.minPositive,
-              controller: _controller,
-              physics: SlowFixedExtentScrollPhysics(),
-              itemExtent: childSize, // 7 days per width
-              childDelegate: ListWheelChildBuilderDelegate(
-                  builder: (ctxt, int) {
-                    return RotatedBox(quarterTurns: 1,
-                        child: selectedWidget(int)
-                    );
-                  }
+              child: ListWheelScrollView.useDelegate(
+                onSelectedItemChanged: (int) {
+                  widget.onChanged(int); // pass selected into bloc sink
+                  setState(() {
+                    /// Rebuild selectedWidget, possibly Month text
+                    _selected = int;
+                    _selectedMonth =
+                        (getMonthTag(daysInFuture(int)) == _selectedMonth)
+                            ? _selectedMonth
+                            : getMonthTag(daysInFuture(int));
+                  });
+                },
+                perspective: double.minPositive,
+                controller: _controller,
+                physics: SlowFixedExtentScrollPhysics(),
+                itemExtent: childSize,
+                // 7 days per width
+                childDelegate:
+                    ListWheelChildBuilderDelegate(builder: (ctxt, int) {
+                  return RotatedBox(
+                      quarterTurns: 1, child: selectedWidget(int));
+                }),
               ),
             ),
           ),
@@ -132,11 +144,39 @@ class DatePickerState extends State<DatePicker> {
   }
 
   String getMonthTag(DateTime time) {
-    return _monthMap[time.month]; /// [Leden...Prosinec]
+    return _monthMap[time.month];
+
+    /// [Leden...Prosinec]
   }
 
   DateTime daysInFuture(int i) {
-    return _NOW.add(Duration(days:i));
+    return _NOW.add(Duration(days: i));
+  }
+
+  int getTapIndex(TapUpDetails t, int selected, double width) {
+    if (t.globalPosition.dx >= 0.0 && t.globalPosition.dx <= (1 / 7) * width) {
+      return selected - 3;
+    }
+    if (t.globalPosition.dx >= (1 / 7) * width &&
+        t.globalPosition.dx <= (2 / 7) * width) {
+      return selected - 2;
+    }
+    if (t.globalPosition.dx >= (2 / 7) * width &&
+        t.globalPosition.dx <= (3 / 7) * width) {
+      return selected - 1;
+    }
+    if (t.globalPosition.dx >= (4 / 7) * width &&
+        t.globalPosition.dx <= (5 / 7) * width) {
+      return selected + 1;
+    }
+    if (t.globalPosition.dx >= (5 / 7) * width &&
+        t.globalPosition.dx <= (6 / 7) * width) {
+      return selected + 2;
+    }
+    if (t.globalPosition.dx >= (6 / 7) * width &&
+        t.globalPosition.dx <= width) {
+      return selected + 3;
+    }
   }
 
 }
