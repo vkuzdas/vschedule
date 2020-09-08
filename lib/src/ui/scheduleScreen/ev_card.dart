@@ -32,11 +32,11 @@ class EventCard extends StatelessWidget {
 
     if (_goesInStack) {
       _height = devH * 0.20;
-      _width = devW * 0.56;
+      _width = devW * 0.58;
       _cutoff = 10;
     } else {
       _height = devH * 0.22;
-      _width = devW * 0.6;
+      _width = devW * 0.62;
       _cutoff = 30;
     }
 

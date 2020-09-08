@@ -111,16 +111,14 @@ class _ScheduleEventWidgetState extends State<ScheduleEventWidget> {
                       fontFamily: "Poppins",
                       letterSpacing: 2.0,
                       color: fontColor),
-                )
-            )
-        ),
+                ))),
 
         /// MIDDLE: Line & bullet
-        Expanded(flex: 1, child: LineBullet(widget._state)),
+        Expanded(flex: 2, child: LineBullet(widget._state)),
 
         /// RIGHT: Card
         Expanded(
-            flex: 5,
+            flex: 7,
             child: EventCard(false, ev.getCourse(), ev.getTeacher(),
                 ev.getRoom(), ev.getEntry(), ev.getUntil()))
       ]),
