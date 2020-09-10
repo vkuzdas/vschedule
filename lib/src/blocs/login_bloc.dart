@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
@@ -47,8 +48,14 @@ class LoginBloc {
 
     try {
       list = await api.downloadSchedule(usr, pwd);
+    } on ClientException catch (ce) {
+      _exception.add("Přihlášení se nepovedlo, zkontroluj údaje");
+      _log.warning(ce.toString());
+      _loading.add(false);
+      return false;
     } on Exception catch (e) {
       _exception.add("Login se nepovedl");
+      _log.warning(e.toString());
       _loading.add(false);
       return false;
     }
