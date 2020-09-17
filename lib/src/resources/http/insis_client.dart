@@ -70,19 +70,17 @@ class InsisClient {
     if (res.statusCode == 403) {
       _log.info(res.reasonPhrase + " " + res.statusCode.toString());
       throw ClientException("Server responded with " +
-          res.statusCode.toString() +
-          ": " +
-          res.reasonPhrase +
-          ". Try entering valid credentials.");
+          res.statusCode.toString() + ": " +
+          res.reasonPhrase + ". Try entering valid credentials.");
     }
-    _log.info(res.reasonPhrase + " " + res.statusCode.toString());
+    _log.info("GetAuthCookie: " + res.reasonPhrase + " " + res.statusCode.toString());
     String uisAuth = res.headers["set-cookie"].split(';')[0];
     return uisAuth;
   }
 
   Future<List<ScheduleEvent>> getSchedule() async {
     Response res = await get(_INSIS_ROOT + _SCHEDULE_URI, headers: _headers);
-    _log.info(res.reasonPhrase + " " + res.statusCode.toString());
+    _log.info("GetSchedule: " + res.reasonPhrase + " " + res.statusCode.toString());
     Document dom = parse(res.body);
     List<Element> scheduleElement = dom.querySelectorAll('#tmtab_1 > tbody > tr');
     List<ScheduleEvent> schedule = [];

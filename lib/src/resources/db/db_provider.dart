@@ -125,12 +125,9 @@ class DBProvider {
 
   Future<void> insertEvent(ScheduleEvent event) async {
     _log.info("DB event insert: [" +
-        event.getFrom() +
-        ", " +
-        event.getRoom() +
-        ", " +
-        event.getDayNumber().toString() +
-        "]");
+        event.getFrom() + ", " +
+        event.getRoom() + ", " +
+        event.getDayNumber().toString() + "]");
     Map<String, dynamic> values = {
       "day": event.getDayNumber(),
       "[from]": event.getFrom(), // FROM is a keyword

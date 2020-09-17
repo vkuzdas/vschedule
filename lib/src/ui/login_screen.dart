@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
-import 'package:vseschedule_03/src/resources/credentials/credential_provider.dart';
 import 'package:vseschedule_03/src/resources/db/db_provider.dart';
 
 import '../blocs/login_bloc.dart';
@@ -17,33 +16,30 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  LoginBloc bloc;
+  static final String _SET_PIN_ROUTE = "/setPin";
+  LoginBloc _bloc;
   final _log = Logger('LoginScreen');
-  CredentialProvider credProvider;
-  DBProvider db;
-  double deviceWidth;
-  double deviceHeight;
+  DBProvider _db;
+  Size _devSize;
 
   static final String _BGRND_IMG = "images/login_pixel2_960.jpg";
 
   @override
   void initState() {
     super.initState();
-    credProvider = CredentialProvider.getInstance();
-    db = DBProvider.getInstance();
+    _db = DBProvider.getInstance();
   }
 
   @override
   void dispose() {
     super.dispose();
-    bloc.dispose();
+    _bloc.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    deviceWidth = MediaQuery.of(context).size.width;
-    deviceHeight = MediaQuery.of(context).size.height;
-    bloc = LoginBlocProvider.of(context);
+    _devSize = MediaQuery.of(context).size;
+    _bloc = LoginBlocProvider.of(context);
 
     return Container(
         decoration: BoxDecoration(
@@ -56,36 +52,36 @@ class LoginScreenState extends State<LoginScreen> {
           // TODO: using Material messes up scrolling
           backgroundColor: Colors.transparent,
           body: Container(
-            margin: EdgeInsets.fromLTRB(deviceWidth * 0.1, 0.0, deviceWidth * 0.1, 0.0),
+            margin: EdgeInsets.fromLTRB(_devSize.width * 0.1, 0.0, _devSize.width * 0.1, 0.0),
             child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(), // no glow on the end
-                child: Column(
-                  children: <Widget>[
-                    Container(height: deviceHeight * 0.2),
-                    logo(context),
-                    Container(height: deviceHeight * 0.01),
-                    progressIndicator(bloc.isLoading),
-                    Container(height: deviceHeight * 0.05),
-                    xnameField(bloc),
-                    passwordField(bloc),
-                    Container(height: deviceHeight * 0.05),
-                    exceptionNotifier(bloc),
-                    Container(height: deviceHeight * 0.05),
-                    submitButton(bloc, context),
-                    Container(height: deviceHeight * 0.01),
-                  ]
-                )
+              physics: BouncingScrollPhysics(), // no glow on the end
+              child: Column(
+                children: <Widget>[
+                  Container(height: _devSize.height * 0.2),
+                  logo(context),
+                  Container(height: _devSize.height * 0.01),
+                  progressIndicator(),
+                  Container(height: _devSize.height * 0.05),
+                  xnameField(),
+                  passwordField(),
+                  Container(height: _devSize.height * 0.05),
+                  exceptionNotifier(),
+                  Container(height: _devSize.height * 0.05),
+                  submitButton(context),
+                  Container(height: _devSize.height * 0.01),
+                ]
+              )
             ),
           ),
         )
     );
   }
 
-  Widget progressIndicator(Stream<bool> loading) {
+  Widget progressIndicator() {
     return Container(
         height: 3,
         child: StreamBuilder(
-          stream: loading,
+          stream: _bloc.isLoading,
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data) {
               return LinearProgressIndicator(
@@ -114,9 +110,9 @@ class LoginScreenState extends State<LoginScreen> {
   /// onSaved does not trigger with every change, only on Form.save
   /// this unfortunately introduces Key besides already used Bloc.
   ///   ==>> using Bloc with onChange
-  Widget xnameField(LoginBloc bloc) {
+  Widget xnameField() {
     return TextField(
-      onChanged: bloc.sinkXname,
+      onChanged: _bloc.sinkXname,
       style: TextStyle(
           fontSize: 15,
           color: AppColors.whiteFont
@@ -136,9 +132,9 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget passwordField(LoginBloc bloc) {
+  Widget passwordField() {
     return TextField(
-      onChanged: bloc.sinkPassword,
+      onChanged: _bloc.sinkPassword,
       style: TextStyle(
         fontSize: 15,
           color: AppColors.whiteFont
@@ -159,9 +155,9 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget exceptionNotifier(LoginBloc bloc) {
+  Widget exceptionNotifier() {
     return StreamBuilder(
-      stream: bloc.exception,
+      stream: _bloc.exception,
       builder: (context, snapshot){
         return Text(
         snapshot.hasData ? "" + snapshot.data : "",
@@ -175,28 +171,28 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget submitButton(LoginBloc bloc, BuildContext buildContext) {
-    _log.info("SubmitButton rebuilt");
+  Widget submitButton(BuildContext buildContext) {
     return Container(
-      height: deviceHeight * 0.0664,
-      width: deviceWidth * 0.47225,
+      height: _devSize.height * 0.0664,
+      width: _devSize.width * 0.47225,
       child: FutureBuilder(
-        future: db.isFirstLogin(),
-        builder: (context, isFirstLogin) {
+        future: _db.isFirstLogin(),
+        builder: (context, isFirstLogin) { /// No need for it in HERE!!! ommit
           if (isFirstLogin.connectionState == ConnectionState.done) {
             return StreamBuilder(
-                stream: bloc.pwdXnmCombined,
+                stream: _bloc.pwdXnmCombined,
                 builder: (context, snapshot) {
                   return RaisedButton(
                     onPressed: snapshot.hasData ? () async {
-                            bool switchScreen = await bloc.submit();
+                            bool switchScreen = await _bloc.submit();
                             if (switchScreen) {
                               if (isFirstLogin.data) {
                                 print("first login");
                               } else {
                                 print("second login");
                               }
-                              Navigator.pushNamed(buildContext, "/setPin");
+                              _log.info("Navigating to $_SET_PIN_ROUTE");
+                              Navigator.pushNamed(buildContext, _SET_PIN_ROUTE);
                             }
                           }
                         : null,
