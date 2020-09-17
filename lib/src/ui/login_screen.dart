@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
+import 'package:vseschedule_03/src/resources/credentials/credential_provider.dart';
+import 'package:vseschedule_03/src/resources/db/db_provider.dart';
 
 import '../blocs/login_bloc.dart';
 import '../blocs/login_bloc_provider.dart';
 import 'app_colors.dart';
 
-class LoginScreen extends StatefulWidget { // stateful since we will be showing progressIndicator and fade a button
+class LoginScreen extends StatefulWidget {
+  // stateful since we will be showing progressIndicator and fade a button
   @override
   State<StatefulWidget> createState() {
     return LoginScreenState();
@@ -16,10 +19,16 @@ class LoginScreen extends StatefulWidget { // stateful since we will be showing 
 class LoginScreenState extends State<LoginScreen> {
   LoginBloc bloc;
   final _log = Logger('LoginScreen');
+  CredentialProvider credProvider;
+  DBProvider db;
+
+  static final String _BGRND_IMG = "images/login_pixel2_960.jpg";
 
   @override
   void initState() {
     super.initState();
+    credProvider = CredentialProvider.getInstance();
+    db = DBProvider.getInstance();
   }
 
   @override
@@ -35,29 +44,11 @@ class LoginScreenState extends State<LoginScreen> {
     bloc = LoginBlocProvider.of(context);
     bool notNull(Object o) => o != null;
 
-//    return LoginBlocProvider (
-//        child: MaterialApp(
-//          title: 'vschedule',
-//          home: Container(
-//            decoration: BoxDecoration(
-//              image: DecorationImage(
-//                image: AssetImage("images/login_pixel2_960.jpg"),
-//                fit: BoxFit.cover,
-//              ),
-//            ),
-//            child: Scaffold(
-//              body: LoginScreen(),
-//              backgroundColor: Colors.transparent,
-//            ),
-//          ),
-//        )
-//    );
 
-    // TODO --** Scale everything relatively to devices width and height **--
     return Container(
-      decoration: BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/login_pixel2_960.jpg"),
+            image: AssetImage(_BGRND_IMG),
             fit: BoxFit.cover,
           ),
         ),
@@ -87,28 +78,28 @@ class LoginScreenState extends State<LoginScreen> {
                     Container(height: deviceHeight * 0.05),
                     xnameField(bloc),
                     passwordField(bloc),
-                Container(height: deviceHeight * 0.05),
-                exceptionNotifier(bloc),
-                Container(height: deviceHeight * 0.05),
-                Container(
+                    Container(height: deviceHeight * 0.05),
+                    exceptionNotifier(bloc),
+                    Container(height: deviceHeight * 0.05),
+                    Container(
 //                  height: 50, //6,64% width: 200, //47,225%
-                  height: deviceHeight * 0.0664, width: deviceWidth * 0.47225,
-                  child: StreamBuilder(
-                      stream: bloc.loading,
-                      builder: (context, snapshot) {
-                        return snapshot.data == false
+                      height: deviceHeight * 0.0664,
+                      width: deviceWidth * 0.47225,
+                      child: StreamBuilder(
+                          stream: bloc.loading,
+                          builder: (context, snapshot) {
+                            return snapshot.data == false
                                 ? submitButton(bloc, context)
                                 : Container(/*EMPTY*/);
-                      }
-                  ),
-                ),
-                Container(height: deviceHeight * 0.01),
-              ].where(notNull).toList(), // since dart does not like null list members
-            )
+                          }),
+                    ),
+                    Container(height: deviceHeight * 0.01),
+                  ]
+                      .where(notNull)
+                      .toList(), // since dart does not like null list members
+                )),
           ),
-        ),
-      )
-    );
+        ));
   }
 
   Widget progressIndicator({double height}) {
@@ -209,42 +200,51 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget submitButton(LoginBloc bloc, BuildContext buildContext) {
     _log.info("SubmitButton rebuilt");
-    return StreamBuilder(
-        stream: bloc.pwdXnmCombined,
-        builder: (context, snapshot) {
-          return RaisedButton(
-            onPressed: snapshot.hasData ? () async {
-              bool switchScreen = await bloc.submit();
-              if (switchScreen) {
-                Navigator.pushNamed(
-                    buildContext,
-                    "/schedule"
+    return FutureBuilder(
+      future: db.isFirstLogin(),
+      builder: (context, isFirstLogin) {
+        if (isFirstLogin.connectionState == ConnectionState.done) {
+          return StreamBuilder(
+              stream: bloc.pwdXnmCombined,
+              builder: (context, snapshot) {
+                return RaisedButton(
+                  onPressed: snapshot.hasData
+                      ? () async {
+                          bool switchScreen = await bloc.submit();
+                          if (switchScreen) {
+                            if (isFirstLogin.data) {
+                              print("first login");
+                            } else {
+                              print("second login");
+                            }
+                            Navigator.pushNamed(buildContext, "/setPin");
+                          }
+                        }
+                      : null,
+                  child: Text(
+                    "Přihlásit se",
+                    style: TextStyle(
+                        fontFamily: "Quicksand",
+                        color: AppColors.whiteFont,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                        shadows: <Shadow>[
+                          Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 5.0,
+                              color: Color.fromARGB(100, 0, 0, 0))
+                        ]),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0)),
+                  color: AppColors.greenBackground,
+                  disabledColor: AppColors.greenBackgroundVeryFaded,
                 );
-              }
-            } : null,
-            child: Text(
-              "Přihlásit se",
-              style: TextStyle(
-                  fontFamily: "Quicksand",
-                  color: AppColors.whiteFont,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                  shadows: <Shadow>[
-                    Shadow(
-                        offset: Offset(2.0, 2.0),
-                        blurRadius: 5.0,
-                        color: Color.fromARGB(100, 0, 0, 0)
-                    )
-                  ]
-              ),
-            ),
-          shape: RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0)
-          ),
-          color: AppColors.greenBackground,
-          disabledColor: AppColors.greenBackgroundVeryFaded,
-          );
+              });
+        } else {
+          return Container();
         }
+      },
     );
   }
 

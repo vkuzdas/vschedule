@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:vseschedule_03/src/resources/db/db_provider.dart';
+import 'package:vseschedule_03/src/ui/pin_screen.dart';
 import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
 import 'blocs/login_bloc_provider.dart';
@@ -9,10 +11,7 @@ import 'ui/app_colors.dart';
 import 'ui/login_screen.dart';
 
 class VscheduleApp extends StatelessWidget {
-
-
   Widget build(BuildContext context) {
-
     /// App display properties
     SystemChrome.setEnabledSystemUIOverlays([]); // disable upper bar
     SystemChrome.setPreferredOrientations([
@@ -28,16 +27,39 @@ class VscheduleApp extends StatelessWidget {
 
     bool signedInPreviously = true;
 
-    return MaterialApp(
-      title: 'vschedule',
-      theme: ThemeData.dark(),
-      themeMode: ThemeMode.dark,
-      darkTheme: vscheduleDarkThemeData(),
-      debugShowCheckedModeBanner: false,
-      initialRoute: "/login",
-      routes: {
-        "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
-        "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen())
+    DBProvider db = DBProvider.getInstance();
+    return FutureBuilder(
+      future: db.init(),
+      builder: (context, isInitialized) {
+        if (isInitialized.connectionState == ConnectionState.done &&
+            isInitialized.data) {
+          return FutureBuilder(
+            future: db.isFirstLogin(),
+            builder: (context, isFirstLogin) {
+              if (isFirstLogin.connectionState == ConnectionState.done) {
+                return MaterialApp(
+                  title: 'vschedule',
+                  theme: ThemeData.dark(),
+                  themeMode: ThemeMode.dark,
+                  darkTheme: vscheduleDarkThemeData(),
+                  debugShowCheckedModeBanner: false,
+                  initialRoute: isFirstLogin.data ? "/login" : "/checkPin",
+                  routes: {
+                    "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
+                    "/schedule": (ctxt) =>
+                        ScheduleBlocProvider(child: ScheduleScreen()),
+                    "/setPin": (ctxt) => PinScreen(isFirstLogin: true),
+                    "/checkPin": (ctxt) => PinScreen(isFirstLogin: false)
+                  },
+                );
+              } else {
+                return Container();
+              }
+            },
+          );
+        } else {
+          return Container();
+        }
       },
     );
   }

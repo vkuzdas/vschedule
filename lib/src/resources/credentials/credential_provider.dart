@@ -8,12 +8,15 @@ class CredentialProvider {
   final String _USR = "usr";
   final String _PWD = "pwd";
 
+  String _usr;
+  String _pwd;
 
   // private static instance
-  static final CredentialProvider _instance = CredentialProvider._singletonConstructor();
+  static final CredentialProvider _instance =
+      CredentialProvider._singletonConstructor();
 
   // private constructor
-  CredentialProvider._singletonConstructor(){
+  CredentialProvider._singletonConstructor() {
     _storage = new FlutterSecureStorage();
   }
 
@@ -22,18 +25,43 @@ class CredentialProvider {
     return _instance;
   }
 
-
-  void saveCredentials(String usr, String pwd) async {
-    await _storage.write(key: _USR, value: usr);
-    await _storage.write(key: _PWD, value: pwd);
+  void setUsr(String usr) {
+    this._usr = usr;
   }
 
-  Future<String> getPwd() async {
-    return await _storage.read(key: _PWD);
+  void setPwd(String pwd) {
+    this._pwd = pwd;
   }
 
-  Future<String> getUsr() async {
-    return await _storage.read(key: _USR);
+  void encodeCredentials(String key) async {
+    await _storage.write(
+        key: _USR, value: _usr); // xname/username is not encrypted
+    await _storage.write(key: key, value: _pwd);
+  }
+
+  Future<bool> canDecodeCredentials(String key) async {
+    String user = await _storage.read(key: _USR);
+    String password = await _storage.read(key: key);
+    if (password != null) {
+      _usr = user;
+      _pwd = password;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  setDecodedCredentials(String key) async {
+    _usr = await _storage.read(key: _USR);
+    _pwd = await _storage.read(key: key);
+  }
+
+  String getPwd() {
+    return _pwd;
+  }
+
+  String getUsr() {
+    return _usr;
   }
 
   void deleteAll() async {

@@ -51,31 +51,34 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //            bottomBarHeight
         );
 
-    return Container(
-      /// Background
-      decoration: BoxDecoration(
-        image:
-            DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
-      ),
-
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-
-        /// DatePickerWidget
-        appBar: scheduleHeader(bloc),
-
-        body: Container(
-          width: _devSize.width,
-          height: bodyHeight,
-          color: AppColors.blackBackground2,
-
-          /// ScheduleBody
-          child: buildSchedule(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Container(
+        /// Background
+        decoration: BoxDecoration(
+          image:
+              DecorationImage(image: AssetImage(_BGRND_IMG), fit: BoxFit.cover),
         ),
 
-        /// Bottom navigation
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+
+          /// DatePickerWidget
+          appBar: scheduleHeader(bloc),
+
+          body: Container(
+            width: _devSize.width,
+            height: bodyHeight,
+            color: AppColors.blackBackground2,
+
+            /// ScheduleBody
+            child: buildSchedule(),
+          ),
+
+          /// Bottom navigation
 //          bottomNavigationBar: scheduleFooter(_devSize.height)
-        /// TODO: finish-up About & Schedule pages
+          /// TODO: finish-up About & Schedule pages
+        ),
       ),
     );
   }
@@ -88,7 +91,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         if (selectedDay.connectionState == ConnectionState.active) {
           int weekday = _selectedToWeekday(
               selectedDay); // selected -> weekday conversion
-          _log.warning("weekday: ${weekday}");
+          _log.info("weekday: ${weekday}");
           return FutureBuilder(
             future: db.getEventsOnWeekday(weekday),
             builder: (futureContext, dbStream) {

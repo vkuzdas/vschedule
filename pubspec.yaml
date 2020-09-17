@@ -16,6 +16,7 @@ dependencies:
   #WEB
   http: any
   html: any
+  pin_code_fields: ^5.0.1
 
   #BLOCS
   rxdart: ^0.18.0

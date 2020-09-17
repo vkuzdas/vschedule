@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
@@ -14,15 +15,17 @@ import '../../models/schedule_event.dart';
 
 //TODO should the connection be closed?... elaborate https://stackoverflow.com/questions/54055106/not-closing-the-database-with-flutters-sqflite
 class DBProvider {
+  Future<bool> _isInitilized;
 
   // private static instance
   static final DBProvider _instance = new DBProvider._singletonConstructor();
 
   final _log = Logger("DBProvider");
 
-  static final String _TABLE = "ScheduleEvents";
-  static final String _createTableString = """
-            CREATE TABLE $_TABLE
+  static final String _SCHEDULE_EVENTS_TABLE = "ScheduleEvents";
+  static final String _STATIC_DATA_TABLE = "StaticData";
+  static final String _createScheduleEventsTable = """
+            CREATE TABLE $_SCHEDULE_EVENTS_TABLE
             ( day       INTEGER,
               [from]    TEXT,
               until     TEXT,
@@ -31,12 +34,16 @@ class DBProvider {
               room      TEXT,
               teacher   TEXT
             )""";
+  static final String _createStaticDataTable = """
+            CREATE TABLE $_STATIC_DATA_TABLE 
+            ( firstLogin BOOLEAN NOT NULL CHECK (firstLogin IN (0,1)));
+  """;
 
   Database _db;
 
   // private constructor
   DBProvider._singletonConstructor() {
-    _init();
+//    _init();
   }
 
   // instance accesor
@@ -44,38 +51,46 @@ class DBProvider {
     return _instance;
   }
 
-  void _init() async {
+  Future<bool> isInitialized() async {
+    return _isInitilized;
+  }
 
+  Future<bool> init() async {
     _log.info("Initializing db.");
     Directory dir = await getApplicationDocumentsDirectory();
     final path = join(dir.path, "schedule_events.db");
 
     // gets executed only on app installation
     _db = await openDatabase(path, version: 1, onCreate: (newDb, version) {
-      newDb.execute(_createTableString);
+      newDb.execute(_createScheduleEventsTable);
+      newDb.execute(_createStaticDataTable);
+      newDb.insert(_STATIC_DATA_TABLE, {"firstLogin": 1});
     });
 
 //    deleteAllEntries();
 //    insertTestBatch();
 
-    List<Map<String, dynamic>> tableInfo =
-        await _db.rawQuery("PRAGMA table_info([$_TABLE])");
-    _log.fine("Tables:  " + tableInfo.toString());
+//    List<Map<String, dynamic>> tableInfo =
+//        await _db.rawQuery("PRAGMA table_info([$_SCHEDULE_EVENTS_TABLE])");
+//    _log.fine("Tables:  " + tableInfo.toString());
+//
+//    List<Map<String, dynamic>> select =
+//        await _db.rawQuery("SELECT * FROM $_STATIC_DATA_TABLE");
+//    _log.fine("Static data query:  " + select.toString());
 
-    List<Map<String, dynamic>> select =
-        await _db.rawQuery("SELECT * FROM ScheduleEvents");
-    _log.fine("After insert:  " + select.toString());
+    _log.info("DB initialized.");
+    return true;
   }
 
   Future<bool> isEmpty() async {
     List<Map<String, dynamic>> select =
-        await _db.rawQuery("SELECT * FROM ScheduleEvents");
+    await _db.rawQuery("SELECT * FROM ScheduleEvents");
     return select.isEmpty;
   }
 
   Future<List<ScheduleEvent>> getEventsByDay(String day) async {
     final result = await _db.query(
-      _TABLE,
+      _SCHEDULE_EVENTS_TABLE,
       columns: null,
       where: "day = ?",
       whereArgs: [day],
@@ -96,7 +111,7 @@ class DBProvider {
   }
 
   Future<List<ScheduleEvent>> getSchedule() async {
-    final result = await _db.rawQuery("SELECT * FROM $_TABLE");
+    final result = await _db.rawQuery("SELECT * FROM $_SCHEDULE_EVENTS_TABLE");
     List<ScheduleEvent> schedule = [];
     result.forEach((json) {
       ScheduleEvent event = ScheduleEvent.fromStrings(
@@ -129,7 +144,7 @@ class DBProvider {
       "room": event.getRoom(),
       "teacher": event.getTeacher()
     };
-    _db.insert(_TABLE, values);
+    _db.insert(_SCHEDULE_EVENTS_TABLE, values);
 
 //    List<Map<String, dynamic>> select =
 //        await _db.rawQuery("SELECT * FROM ScheduleEvents");
@@ -162,25 +177,34 @@ class DBProvider {
 
   /// All entries are deleted on each login
   Future<int> deleteAllEntries() {
-    Future<int> deletedRowCount = _db.delete(_TABLE);
+    Future<int> deletedRowCount = _db.delete(_SCHEDULE_EVENTS_TABLE);
     return deletedRowCount;
+  }
+
+  Future<bool> isFirstLogin() async {
+    try {
+      List<Map<String, dynamic>> res = await _db.query(_STATIC_DATA_TABLE);
+      _log.info("isFirstLogin?: " + res.toString());
+      return (res[0]["firstLogin"] as int) == 0 ? false : true;
+    } on Exception catch (e) {
+      _log.info(e.toString());
+    }
+    return false;
+  }
+
+  setIsFirstLogin(bool bool) {
+    Future<int> deletedRowCount = _db.delete(_STATIC_DATA_TABLE);
+    int insertBool = bool ? 1 : 0;
+    _db.insert(_STATIC_DATA_TABLE, {"firstLogin": insertBool});
   }
 
   void _insertTestBatch() {
     insertEvent(ScheduleEvent.fromStrings("Mon", "11:00", "12:30",
         "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
-    insertEvent(ScheduleEvent.fromStrings("Thu", "09:15",
-        "10:45",
-        "4EK212 Quantitative Management",
-        "Lecture",
-        "NB A",
-        "J. Sekničková"));
-    insertEvent(ScheduleEvent.fromStrings(
-        "Fri",
-        "09:15",
-        "10:45",
-        "4EK212 Quantitative Management",
-        "Lecture",
+    insertEvent(ScheduleEvent.fromStrings("Thu", "09:15", "10:45",
+        "4EK212 Quantitative Management", "Lecture", "NB A", "J. Sekničková"));
+    insertEvent(ScheduleEvent.fromStrings("Fri", "09:15", "10:45",
+        "4EK212 Quantitative Management", "Lecture",
         "NB A",
         "J. Sekničková"));
     insertEvent(ScheduleEvent.fromStrings(

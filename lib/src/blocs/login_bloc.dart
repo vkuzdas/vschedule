@@ -2,6 +2,7 @@ import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vseschedule_03/src/models/schedule_event.dart';
+import 'package:vseschedule_03/src/resources/credentials/credential_provider.dart';
 import 'package:vseschedule_03/src/resources/db/db_provider.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client.dart';
 
@@ -13,6 +14,7 @@ class LoginBloc {
   final _log = Logger('LoginBloc');
   InsisClient api = InsisClient.getInstance();
   DBProvider db = DBProvider.getInstance();
+  CredentialProvider credentialProvider = CredentialProvider.getInstance();
 
   final _xname = BehaviorSubject<String>(seedValue: "");
   final _password = BehaviorSubject<String>(seedValue: "");
@@ -62,6 +64,8 @@ class LoginBloc {
 
     await db.deleteAllEntries();
     await db.saveSchedule(list);
+    credentialProvider.setPwd(pwd); // set credentials on login page
+    credentialProvider.setUsr(usr); // encode them on pin page
 
     _loading.add(false);
     _exception.drain();
