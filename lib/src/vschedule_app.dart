@@ -21,16 +21,14 @@ class VscheduleApp extends StatelessWidget {
     /// Logging setup
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print(
-          '${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
+      print('${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
     DBProvider db = DBProvider.getInstance();
     return FutureBuilder(
       future: db.init(),
       builder: (context, isInitialized) {
-        if (isInitialized.connectionState == ConnectionState.done &&
-            isInitialized.data) {
+        if (isInitialized.connectionState == ConnectionState.done && isInitialized.data) {
           return FutureBuilder(
             future: db.isFirstLogin(),
             builder: (context, isFirstLogin) {
@@ -44,8 +42,7 @@ class VscheduleApp extends StatelessWidget {
                   initialRoute: isFirstLogin.data ? "/login" : "/checkPin",
                   routes: {
                     "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
-                    "/schedule": (ctxt) =>
-                        ScheduleBlocProvider(child: ScheduleScreen()),
+                    "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen()),
                     "/setPin": (ctxt) => PinScreen(isFirstLogin: true),
                     "/checkPin": (ctxt) => PinScreen(isFirstLogin: false)
                   },
@@ -71,7 +68,8 @@ class VscheduleApp extends StatelessWidget {
 
       /// Text
       textTheme: TextTheme(
-        headline5: // LOGO "vschedule" on Login Page
+        // LOGO "vschedule" on Login Page
+        headline5:
             TextStyle(
                 fontFamily: "Poppins",
                 fontSize: 50.0,
@@ -89,24 +87,24 @@ class VscheduleApp extends StatelessWidget {
                   offset: Offset(0.3, 0.3), color: AppColors.greenBackground),
               /*topRight*/
               Shadow(
-                  offset: Offset(-0.3, 0.3),
-                  color: AppColors.greenBackground), /*topLeft*/
+                  offset: Offset(-0.3, 0.3), color: AppColors.greenBackground),
+              /*topLeft*/
             ]),
-        headline6: // Page Title, "Rozvrh" on ScheduleScreen
-            TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
+        // Page Title, "Rozvrh" on ScheduleScreen
+        headline6: TextStyle(letterSpacing: 1.0, fontFamily: "Poppins", fontSize: 32),
         bodyText2: TextStyle(fontSize: 15.0, color: AppColors.whiteFont),
       ),
       fontFamily: 'Quicksand',
 
       /// Colors
-      scaffoldBackgroundColor: AppColors.blackBackground1,
-      colorScheme: ColorScheme.fromSwatch(
-        cardColor: AppColors.blackBackground1,
-        backgroundColor: AppColors.blackBackground1,
-        accentColor: AppColors.greenBackground,
-        brightness: Brightness.dark,
-        errorColor: AppColors.orange,
-      ),
+//      scaffoldBackgroundColor: AppColors.blackBackground1,
+//      colorScheme: ColorScheme.fromSwatch(
+//        cardColor: AppColors.blackBackground1,
+//        backgroundColor: AppColors.blackBackground1,
+//        accentColor: AppColors.greenBackground,
+//        brightness: Brightness.dark,
+//        errorColor: AppColors.orange,
+//      ),
 
       /// Buttons
       buttonTheme: ButtonThemeData(

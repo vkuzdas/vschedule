@@ -9,9 +9,9 @@ enum Entry { LECTURE, SEMINAR, UNKNOWN }
 class ScheduleEvent {
 
   // arbitrary reference date (start of winter semester of 2020, can be random as long as BASE_DATETIME is  Monday)
-  final int _BASE_YEAR  = 2020;
-  final int _BASE_MONTH = 9;
-  final int _BASE_DAY   = 20; // SATURDAY
+  static final int _BASE_YEAR  = 2020;
+  static final int _BASE_MONTH = 9;
+  static final int _BASE_DAY   = 20; // SATURDAY
 
   DateTime  _from;    // When does the event start?                               Ex.: "10:30"
   DateTime  _until;   // When does the event end?                                 Ex.: "10:30"

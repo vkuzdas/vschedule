@@ -111,8 +111,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   PreferredSize scheduleHeader(ScheduleBloc bloc) {
-    // GETS CALLED TWICE, WTF???
-    _log.info("sched header");
 
     return PreferredSize(
       preferredSize: Size.fromHeight(_devSize.height * 0.2),

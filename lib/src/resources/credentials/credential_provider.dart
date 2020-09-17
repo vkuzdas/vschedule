@@ -5,8 +5,8 @@ class CredentialProvider {
 
   final _log = Logger("CredentialProvider");
   FlutterSecureStorage _storage;
-  final String _USR = "usr";
-  final String _PWD = "pwd";
+  static final String _USR = "usr";
+  static final String _PWD = "pwd";
 
   String _usr;
   String _pwd;

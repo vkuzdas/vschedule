@@ -21,6 +21,8 @@ class LoginScreenState extends State<LoginScreen> {
   final _log = Logger('LoginScreen');
   CredentialProvider credProvider;
   DBProvider db;
+  double deviceWidth;
+  double deviceHeight;
 
   static final String _BGRND_IMG = "images/login_pixel2_960.jpg";
 
@@ -39,11 +41,9 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
     bloc = LoginBlocProvider.of(context);
-    bool notNull(Object o) => o != null;
-
 
     return Container(
         decoration: BoxDecoration(
@@ -56,8 +56,7 @@ class LoginScreenState extends State<LoginScreen> {
           // TODO: using Material messes up scrolling
           backgroundColor: Colors.transparent,
           body: Container(
-            margin: EdgeInsets.fromLTRB(
-                deviceWidth * 0.1, 0.0, deviceWidth * 0.1, 0.0),
+            margin: EdgeInsets.fromLTRB(deviceWidth * 0.1, 0.0, deviceWidth * 0.1, 0.0),
             child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(), // no glow on the end
                 child: Column(
@@ -65,48 +64,39 @@ class LoginScreenState extends State<LoginScreen> {
                     Container(height: deviceHeight * 0.2),
                     logo(context),
                     Container(height: deviceHeight * 0.01),
-                    Container(
-                      height: 3,
-                      child: StreamBuilder(
-                          stream: bloc.loading,
-                          builder: (context, snapshot) {
-                            return (snapshot.data == true
-                                ? progressIndicator()
-                                : Container(/*EMPTY*/));
-                          }),
-                    ),
+                    progressIndicator(bloc.isLoading),
                     Container(height: deviceHeight * 0.05),
                     xnameField(bloc),
                     passwordField(bloc),
                     Container(height: deviceHeight * 0.05),
                     exceptionNotifier(bloc),
                     Container(height: deviceHeight * 0.05),
-                    Container(
-//                  height: 50, //6,64% width: 200, //47,225%
-                      height: deviceHeight * 0.0664,
-                      width: deviceWidth * 0.47225,
-                      child: StreamBuilder(
-                          stream: bloc.loading,
-                          builder: (context, snapshot) {
-                            return snapshot.data == false
-                                ? submitButton(bloc, context)
-                                : Container(/*EMPTY*/);
-                          }),
-                    ),
+                    submitButton(bloc, context),
                     Container(height: deviceHeight * 0.01),
                   ]
-                      .where(notNull)
-                      .toList(), // since dart does not like null list members
-                )),
+                )
+            ),
           ),
-        ));
+        )
+    );
   }
 
-  Widget progressIndicator({double height}) {
-    _log.info("ProgressIndicator rebuilt");
-    return LinearProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenBackground),
-      backgroundColor: AppColors.blackBackground1,
+  Widget progressIndicator(Stream<bool> loading) {
+    return Container(
+        height: 3,
+        child: StreamBuilder(
+          stream: loading,
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data) {
+              return LinearProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenBackground),
+                backgroundColor: AppColors.blackBackground1,
+              );
+            } else {
+              return Container();
+            }
+          }
+        )
     );
   }
 
@@ -125,57 +115,47 @@ class LoginScreenState extends State<LoginScreen> {
   /// this unfortunately introduces Key besides already used Bloc.
   ///   ==>> using Bloc with onChange
   Widget xnameField(LoginBloc bloc) {
-    return StreamBuilder(
-      stream: bloc.xname,
-      builder: (context, snapshot) {
-        return TextField(
-          onChanged: bloc.sinkXname,
-          style: TextStyle(
-              fontSize: 15,
-              color: AppColors.whiteFont
-          ),
-          decoration: InputDecoration(
-            hintText: "xname",
-            hintStyle: TextStyle(fontSize: 16,
-                fontFamily: "Quicksand",
-                color: AppColors.whiteFontFaded),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.greenBackground),
-            ),
-          ),
-        );
-      },
+    return TextField(
+      onChanged: bloc.sinkXname,
+      style: TextStyle(
+          fontSize: 15,
+          color: AppColors.whiteFont
+      ),
+      decoration: InputDecoration(
+        hintText: "xname",
+        hintStyle: TextStyle(fontSize: 16,
+            fontFamily: "Quicksand",
+            color: AppColors.whiteFontFaded),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.greenBackground),
+        ),
+      ),
     );
   }
 
   Widget passwordField(LoginBloc bloc) {
-    return StreamBuilder(
-      stream: bloc.password,
-      builder: (context, snapshot) {
-        return TextField(
-          onChanged: bloc.sinkPassword,
-          style: TextStyle(
-            fontSize: 15,
-              color: AppColors.whiteFont
-          ),
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: "heslo",
-            hintStyle: TextStyle(fontSize: 16,
-                fontFamily: "Quicksand",
-                color: AppColors.whiteFontFaded),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.greenBackground),
-            ),
-          ),
-        );
-      },
+    return TextField(
+      onChanged: bloc.sinkPassword,
+      style: TextStyle(
+        fontSize: 15,
+          color: AppColors.whiteFont
+      ),
+      obscureText: true,
+      decoration: InputDecoration(
+        hintText: "heslo",
+        hintStyle: TextStyle(fontSize: 16,
+            fontFamily: "Quicksand",
+            color: AppColors.whiteFontFaded),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.greenBackgroundFaded),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.greenBackground),
+        ),
+      ),
     );
   }
 
@@ -197,53 +177,50 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget submitButton(LoginBloc bloc, BuildContext buildContext) {
     _log.info("SubmitButton rebuilt");
-    return FutureBuilder(
-      future: db.isFirstLogin(),
-      builder: (context, isFirstLogin) {
-        if (isFirstLogin.connectionState == ConnectionState.done) {
-          return StreamBuilder(
-              stream: bloc.pwdXnmCombined,
-              builder: (context, snapshot) {
-                return RaisedButton(
-                  onPressed: snapshot.hasData
-                      ? () async {
-                          bool switchScreen = await bloc.submit();
-                          if (switchScreen) {
-                            if (isFirstLogin.data) {
-                              print("first login");
-                            } else {
-                              print("second login");
+    return Container(
+      height: deviceHeight * 0.0664,
+      width: deviceWidth * 0.47225,
+      child: FutureBuilder(
+        future: db.isFirstLogin(),
+        builder: (context, isFirstLogin) {
+          if (isFirstLogin.connectionState == ConnectionState.done) {
+            return StreamBuilder(
+                stream: bloc.pwdXnmCombined,
+                builder: (context, snapshot) {
+                  return RaisedButton(
+                    onPressed: snapshot.hasData ? () async {
+                            bool switchScreen = await bloc.submit();
+                            if (switchScreen) {
+                              if (isFirstLogin.data) {
+                                print("first login");
+                              } else {
+                                print("second login");
+                              }
+                              Navigator.pushNamed(buildContext, "/setPin");
                             }
-                            Navigator.pushNamed(buildContext, "/setPin");
                           }
-                        }
-                      : null,
-                  child: Text(
-                    "Přihlásit se",
-                    style: TextStyle(
-                        fontFamily: "Quicksand",
-                        color: AppColors.whiteFont,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18,
-                        shadows: <Shadow>[
-                          Shadow(
-                              offset: Offset(2.0, 2.0),
-                              blurRadius: 5.0,
-                              color: Color.fromARGB(100, 0, 0, 0))
-                        ]),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0)),
-                  color: AppColors.greenBackground,
-                  disabledColor: AppColors.greenBackgroundVeryFaded,
-                );
-              });
-        } else {
-          return Container();
-        }
-      },
+                        : null,
+                    child: Text(
+                      "Přihlásit se",
+                      style: TextStyle(
+                          fontFamily: "Quicksand",
+                          color: AppColors.whiteFont,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 5.0, color: Color.fromARGB(100, 0, 0, 0))]
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                    color: AppColors.greenBackground,
+                    disabledColor: AppColors.greenBackgroundVeryFaded,
+                  );
+                }
+            );
+          } else {
+            return Container();
+          }
+        },
+      )
     );
   }
-
-
 }

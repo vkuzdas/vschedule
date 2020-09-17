@@ -19,7 +19,7 @@ class LoginBloc {
   final _xname = BehaviorSubject<String>(seedValue: "");
   final _password = BehaviorSubject<String>(seedValue: "");
   final _exception = BehaviorSubject<String>(seedValue: "");
-  final _loading = BehaviorSubject<bool>(seedValue: false);
+  final _isLoading = BehaviorSubject<bool>(seedValue: false);
 
   Stream<String> get xname => _xname.stream;
 
@@ -30,7 +30,7 @@ class LoginBloc {
   Stream<bool> get pwdXnmCombined =>
       Observable.combineLatest2(xname, password, (e, p) => true);
 
-  Stream<bool> get loading => _loading.stream;
+  Stream<bool> get isLoading => _isLoading.stream;
 
   Function(String) get sinkXname => _xname.sink.add;
 
@@ -45,7 +45,7 @@ class LoginBloc {
     final String pwd = _password.value;
     List<ScheduleEvent> list;
 
-    _loading.add(true);
+    _isLoading.add(true);
     _exception.drain();
 
     try {
@@ -53,12 +53,12 @@ class LoginBloc {
     } on ClientException catch (ce) {
       _exception.add("Přihlášení se nepovedlo, zkontroluj údaje");
       _log.warning(ce.toString());
-      _loading.add(false);
+      _isLoading.add(false);
       return false;
     } on Exception catch (e) {
       _exception.add("Login se nepovedl");
       _log.warning(e.toString());
-      _loading.add(false);
+      _isLoading.add(false);
       return false;
     }
 
@@ -67,7 +67,7 @@ class LoginBloc {
     credentialProvider.setPwd(pwd); // set credentials on login page
     credentialProvider.setUsr(usr); // encode them on pin page
 
-    _loading.add(false);
+    _isLoading.add(false);
     _exception.drain();
     return true;
   }

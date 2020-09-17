@@ -92,7 +92,7 @@ class EventCard extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Icon(Icons.person,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: AppColors.greenBackground,
                                 size: 20),
                             SizedBox(
                               width: 2,
@@ -111,7 +111,7 @@ class EventCard extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Icon(Icons.location_on,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: AppColors.greenBackground,
                                 size: 20),
                             SizedBox(
                               width: 2,
@@ -130,7 +130,7 @@ class EventCard extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Icon(Icons.event_available,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: AppColors.greenBackground,
                                 size: 20),
                             SizedBox(
                               width: 2,
