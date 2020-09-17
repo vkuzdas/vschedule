@@ -25,8 +25,6 @@ class VscheduleApp extends StatelessWidget {
           '${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
-    bool signedInPreviously = true;
-
     DBProvider db = DBProvider.getInstance();
     return FutureBuilder(
       future: db.init(),

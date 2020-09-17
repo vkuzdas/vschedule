@@ -144,7 +144,7 @@ class PinScreenState extends State<PinScreen> {
     return Text(
       "vschedule",
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.headline,
+      style: Theme.of(context).textTheme.headline5,
     );
   }
 
@@ -161,7 +161,6 @@ class PinScreenState extends State<PinScreen> {
     credentialProvider.encodeCredentials(value);
     db.setIsFirstLogin(false);
     Navigator.pushNamed(context, "/schedule");
-    // go to schedule page
   }
 
   checkPin(String value, BuildContext context) async {
@@ -170,6 +169,8 @@ class PinScreenState extends State<PinScreen> {
     });
     if (await credentialProvider.canDecodeCredentials(value)) {
       credentialProvider.setDecodedCredentials(value);
+
+      /// SLOWS DOWN schedule page loading
 //      List<ScheduleEvent> list;
 //      try {
 //        list = await api.downloadSchedule(credentialProvider.getUsr(), credentialProvider.getPwd());
@@ -183,8 +184,6 @@ class PinScreenState extends State<PinScreen> {
 //      } finally {
       Navigator.pushNamed(context, "/schedule");
 //      }
-      // if internet, download schedule
-      // go to schedule page
     } else {
       setState(() {
         statusText = _WRONG_PIN;

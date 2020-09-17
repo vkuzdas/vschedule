@@ -114,10 +114,7 @@ class LoginScreenState extends State<LoginScreen> {
     return Text(
       "vschedule",
       textAlign: TextAlign.center,
-      style: Theme
-          .of(context)
-          .textTheme
-          .headline,
+      style: Theme.of(context).textTheme.headline5,
     );
   }
 

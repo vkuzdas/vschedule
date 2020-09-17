@@ -43,7 +43,6 @@ class DBProvider {
 
   // private constructor
   DBProvider._singletonConstructor() {
-//    _init();
   }
 
   // instance accesor
@@ -59,14 +58,12 @@ class DBProvider {
     _log.info("Initializing db.");
     Directory dir = await getApplicationDocumentsDirectory();
     final path = join(dir.path, "schedule_events.db");
-
     // gets executed only on app installation
     _db = await openDatabase(path, version: 1, onCreate: (newDb, version) {
       newDb.execute(_createScheduleEventsTable);
       newDb.execute(_createStaticDataTable);
       newDb.insert(_STATIC_DATA_TABLE, {"firstLogin": 1});
     });
-
 //    deleteAllEntries();
 //    insertTestBatch();
 
@@ -77,7 +74,6 @@ class DBProvider {
 //    List<Map<String, dynamic>> select =
 //        await _db.rawQuery("SELECT * FROM $_STATIC_DATA_TABLE");
 //    _log.fine("Static data query:  " + select.toString());
-
     _log.info("DB initialized.");
     return true;
   }
