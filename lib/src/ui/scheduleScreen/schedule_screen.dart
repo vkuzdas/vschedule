@@ -51,9 +51,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //            bottomBarHeight
         );
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Container(
+    return  Container(
         /// Background
         decoration: BoxDecoration(
           image:
@@ -79,7 +77,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //          bottomNavigationBar: scheduleFooter(_devSize.height)
           /// TODO: finish-up About & Schedule pages
         ),
-      ),
     );
   }
 

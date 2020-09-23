@@ -1,21 +1,24 @@
 name: vseschedule_03
 description: A new Flutter application.
 
-version: 1.0.4+4
+version: 1.0.11+11
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
-  logging: 0.11.4
   #DATABASE
   path_provider: ^1.6.5
-  sqflite: any
+  sqflite: ^1.3.1+1
   #CREDENTIAL STORE
   flutter_secure_storage: ^3.3.1+1
+  shared_preferences: ^0.5.11
+
+  logging: 0.11.4
+
   #WEB
-  http: any
-  html: any
+  http: ^0.12.2
+  html: ^0.14.0+3
   pin_code_fields: ^5.0.1
 
   #BLOCS

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:vseschedule_03/src/resources/db/db_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vseschedule_03/src/ui/pin_screen.dart';
 import 'package:vseschedule_03/src/ui/scheduleScreen/schedule_screen.dart';
 
@@ -11,6 +11,8 @@ import 'ui/app_colors.dart';
 import 'ui/login_screen.dart';
 
 class VscheduleApp extends StatelessWidget {
+  static const String _IS_PIN_SET = "isPinSet";
+
   Widget build(BuildContext context) {
     /// App display properties
     SystemChrome.setEnabledSystemUIOverlays([]); // disable upper bar
@@ -24,39 +26,45 @@ class VscheduleApp extends StatelessWidget {
       print('${record.level.name}: ${record.loggerName}: ${record.time}: ${record.message}');
     });
 
-    DBProvider db = DBProvider.getInstance();
     return FutureBuilder(
-      future: db.init(),
-      builder: (context, isInitialized) {
-        if (isInitialized.connectionState == ConnectionState.done && isInitialized.data) {
-          return FutureBuilder(
-            future: db.isFirstLogin(),
-            builder: (context, isFirstLogin) {
-              if (isFirstLogin.connectionState == ConnectionState.done) {
-                return MaterialApp(
-                  title: 'vschedule',
-                  theme: ThemeData.dark(),
-                  themeMode: ThemeMode.dark,
-                  darkTheme: vscheduleDarkThemeData(),
-                  debugShowCheckedModeBanner: false,
-                  initialRoute: isFirstLogin.data ? "/login" : "/checkPin",
-                  routes: {
-                    "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
-                    "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen()),
-                    "/setPin": (ctxt) => PinScreen(isFirstLogin: true),
-                    "/checkPin": (ctxt) => PinScreen(isFirstLogin: false)
-                  },
-                );
-              } else {
-                return Container();
-              }
-            },
-          );
-        } else {
-          return Container();
-        }
-      },
+        future: isPinSet(),
+        builder: (context, isPinSet) {
+          if (isPinSet.connectionState == ConnectionState.done) {
+            return MaterialApp(
+              title: 'vschedule',
+              theme: ThemeData.dark(),
+              themeMode: ThemeMode.dark,
+              darkTheme: vscheduleDarkThemeData(),
+              debugShowCheckedModeBanner: false,
+              initialRoute: getRoute(isPinSet.data),
+              routes: {
+                "/login": (ctxt) => LoginBlocProvider(child: LoginScreen()),
+                "/schedule": (ctxt) => ScheduleBlocProvider(child: ScheduleScreen()),
+                "/setPin": (ctxt) => PinScreen(isFirstLogin: true),
+                "/checkPin": (ctxt) => PinScreen(isFirstLogin: false)
+              },
+            );
+          } else {
+            return Container();
+          }
+        },
     );
+  }
+
+  Future<bool> isPinSet() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool b = prefs.getBool(_IS_PIN_SET);
+    return b ?? false;  // return variable ?? "defaultIfNull";
+  }
+
+  String getRoute(bool isPinSet) {
+    String route;
+    if(isPinSet) {
+      route = "/checkPin";
+    } else {
+      route = "/login";
+    }
+    return route;
   }
 
 

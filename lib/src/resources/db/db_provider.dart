@@ -43,6 +43,8 @@ class DBProvider {
 
   // private constructor
   DBProvider._singletonConstructor() {
+    // init is async, to wait might be a good idea
+    init();
   }
 
   // instance accesor
@@ -54,7 +56,7 @@ class DBProvider {
     return _isInitilized;
   }
 
-  Future<bool> init() async {
+  init() async {
     _log.info("Initializing db.");
     Directory dir = await getApplicationDocumentsDirectory();
     final path = join(dir.path, "schedule_events.db");
@@ -75,7 +77,6 @@ class DBProvider {
 //        await _db.rawQuery("SELECT * FROM $_STATIC_DATA_TABLE");
 //    _log.fine("Static data query:  " + select.toString());
     _log.info("DB initialized.");
-    return true;
   }
 
   Future<bool> isEmpty() async {

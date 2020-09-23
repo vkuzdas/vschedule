@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vseschedule_03/src/resources/credentials/credential_provider.dart';
 import 'package:vseschedule_03/src/resources/db/db_provider.dart';
 import 'package:vseschedule_03/src/resources/http/insis_client.dart';
@@ -22,6 +23,7 @@ class PinScreenState extends State<PinScreen> {
   static final String _ENTER_PIN = "Zadej svůj pin";
   static final String _WRONG_PIN = "Neplatný pin";
   static const String _BGRND_IMG = "images/login_pixel2_960.jpg";
+  static const String _IS_PIN_SET = "isPinSet";
   CredentialProvider credentialProvider = CredentialProvider.getInstance();
   InsisClient api = InsisClient.getInstance();
   DBProvider db = DBProvider.getInstance();
@@ -157,9 +159,10 @@ class PinScreenState extends State<PinScreen> {
         ));
   }
 
-  setPin(String value, BuildContext context) {
+  setPin(String value, BuildContext context) async {
     credentialProvider.encodeCredentials(value);
-    db.setIsFirstLogin(false);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(_IS_PIN_SET, true);
     Navigator.pushNamed(context, "/schedule");
   }
 

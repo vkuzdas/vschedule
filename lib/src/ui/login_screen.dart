@@ -175,47 +175,33 @@ class LoginScreenState extends State<LoginScreen> {
     return Container(
       height: _devSize.height * 0.0664,
       width: _devSize.width * 0.47225,
-      child: FutureBuilder(
-        future: _db.isFirstLogin(),
-        builder: (context, isFirstLogin) { /// No need for it in HERE!!! ommit
-          if (isFirstLogin.connectionState == ConnectionState.done) {
-            return StreamBuilder(
-                stream: _bloc.pwdXnmCombined,
-                builder: (context, snapshot) {
-                  return RaisedButton(
-                    onPressed: snapshot.hasData ? () async {
-                            bool switchScreen = await _bloc.submit();
-                            if (switchScreen) {
-                              if (isFirstLogin.data) {
-                                print("first login");
-                              } else {
-                                print("second login");
-                              }
-                              _log.info("Navigating to $_SET_PIN_ROUTE");
-                              Navigator.pushNamed(buildContext, _SET_PIN_ROUTE);
-                            }
-                          }
-                        : null,
-                    child: Text(
-                      "Přihlásit se",
-                      style: TextStyle(
-                          fontFamily: "Quicksand",
-                          color: AppColors.whiteFont,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 18,
-                          shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 5.0, color: Color.fromARGB(100, 0, 0, 0))]
-                      ),
-                    ),
-                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                    color: AppColors.greenBackground,
-                    disabledColor: AppColors.greenBackgroundVeryFaded,
-                  );
-                }
+      child: StreamBuilder(
+          stream: _bloc.pwdXnmCombined,
+          builder: (context, snapshot) {
+            return RaisedButton(
+              onPressed: snapshot.hasData ? () async {
+                      bool switchScreen = await _bloc.submit();
+                      if (switchScreen) {
+                        _log.info("Navigating to $_SET_PIN_ROUTE");
+                        Navigator.pushNamed(buildContext, _SET_PIN_ROUTE);
+                      }
+                    }
+                  : null,
+              child: Text(
+                "Přihlásit se",
+                style: TextStyle(
+                    fontFamily: "Quicksand",
+                    color: AppColors.whiteFont,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18,
+                    shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 5.0, color: Color.fromARGB(100, 0, 0, 0))]
+                ),
+              ),
+              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              color: AppColors.greenBackground,
+              disabledColor: AppColors.greenBackgroundVeryFaded,
             );
-          } else {
-            return Container();
           }
-        },
       )
     );
   }
